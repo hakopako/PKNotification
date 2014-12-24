@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  PKNotification
 //
-//  Created by shimada on 2014/12/24.
+//  Created by hakopako on 2014/12/24.
 //  Copyright (c) 2014年 hakopako. All rights reserved.
 //
 
