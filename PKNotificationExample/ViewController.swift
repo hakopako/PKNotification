@@ -6,6 +6,22 @@
 //  Copyright (c) 2014年 hakopako. All rights reserved.
 //
 
+/*
+//-- How to use PKNotification ----------------------------------------------
+//alert - not implemented yet :(
+//PKNotification().alert()
+
+//toast
+PKNotification().toast(message:"hogehogehogehoge")
+
+//progress
+PKNotification().loading(true)
+PKNotification().loading(false)
+PKNotification().success(nil)
+PKNotification().failed("Foo")
+//-------------------------------------------------------------
+*/
+
 import UIKit
 
 class ViewController: UIViewController {
@@ -18,22 +34,6 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-/*
-        //alert
-        PKNotification().alert()
-        
-        
-        //toast
-        PKNotification().toast(message:"hogehogehogehoge", style:nil)
-        
-        //progress
-        PKNotification().loading(true)
-        PKNotification().loading(false)
-        PKNotification().success()
-        PKNotification().failed()
-
-*/
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -45,26 +45,26 @@ class ViewController: UIViewController {
     }
 
     @IBAction func toastButtonDown(sender: AnyObject) {
-        pkNotification.toast(message:"hogehogehogehoge", style:nil)
+        pkNotification.toast(message:"hogehogehogehoge")
     }
     
     @IBAction func loadingButtonDown(sender: AnyObject) {
         pkNotification.loading(true)
-        NSLog("ロード開始")
+        NSLog("start loading...")
         NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector:"onUpdate:", userInfo: nil, repeats: false)
     }
     
     func onUpdate(timer: NSTimer) {
-        NSLog("ロード終わり")
+        NSLog("finish loading...")
         self.pkNotification.loading(false)
     }
     
     @IBAction func successButtonDown(sender: AnyObject) {
-        pkNotification.success()
+        pkNotification.success(nil)
     }
     
     @IBAction func failedButtonDown(sender: AnyObject) {
-        pkNotification.failed()
+        pkNotification.failed("Try again ...")
     }
 
 }
