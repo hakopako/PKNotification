@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -31,14 +32,62 @@
                                     <action selector="toastButtonDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ziJ-2b-pt7"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="raa-MO-oNu">
+                                <rect key="frame" x="255" y="66" width="90" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="90" id="pxQ-FP-rep"/>
+                                    <constraint firstAttribute="height" constant="30" id="q4e-67-6At"/>
+                                </constraints>
+                                <state key="normal" title="Loading">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="loadingButtonDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0YK-7B-2JO"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ze-lv-TS2">
+                                <rect key="frame" x="266" y="104" width="68" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="6H0-Ts-2Un"/>
+                                    <constraint firstAttribute="width" constant="68" id="EB7-oO-seY"/>
+                                </constraints>
+                                <state key="normal" title="Success">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="successButtonDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CzL-PP-6g1"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZfP-4d-ebk">
+                                <rect key="frame" x="277" y="142" width="46" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="46" id="fKR-vf-ZbF"/>
+                                    <constraint firstAttribute="height" constant="30" id="zqY-cP-11n"/>
+                                </constraints>
+                                <state key="normal" title="Failed">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="failedButtonDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="QVA-xJ-7eA"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="raa-MO-oNu" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="855-2q-HbP"/>
+                            <constraint firstItem="7ze-lv-TS2" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="8nh-Xw-WbV"/>
+                            <constraint firstItem="7ze-lv-TS2" firstAttribute="top" secondItem="raa-MO-oNu" secondAttribute="bottom" constant="8" id="Na6-k4-KWK"/>
+                            <constraint firstItem="ZfP-4d-ebk" firstAttribute="top" secondItem="7ze-lv-TS2" secondAttribute="bottom" constant="8" id="Z3t-el-2j0"/>
+                            <constraint firstItem="raa-MO-oNu" firstAttribute="top" secondItem="M4T-TP-fJD" secondAttribute="bottom" constant="8" id="bDC-gU-fgP"/>
                             <constraint firstItem="M4T-TP-fJD" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="gDE-Sr-J5F"/>
+                            <constraint firstItem="ZfP-4d-ebk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="vt8-Qe-c8S"/>
                             <constraint firstItem="M4T-TP-fJD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="xF1-pA-heI"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="failedButton" destination="ZfP-4d-ebk" id="Yyz-Qk-sDy"/>
+                        <outlet property="loadingButton" destination="raa-MO-oNu" id="7be-D5-yrs"/>
+                        <outlet property="successButton" destination="7ze-lv-TS2" id="HLb-uF-GsS"/>
                         <outlet property="toastButton" destination="M4T-TP-fJD" id="pli-HE-nZd"/>
                     </connections>
                 </viewController>

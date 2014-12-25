@@ -11,6 +11,9 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var toastButton: UIButton!
+    @IBOutlet weak var loadingButton: UIButton!
+    @IBOutlet weak var successButton: UIButton!
+    @IBOutlet weak var failedButton: UIButton!
     let pkNotification:PKNotification = PKNotification()
     
     override func viewDidLoad() {
@@ -43,6 +46,25 @@ class ViewController: UIViewController {
 
     @IBAction func toastButtonDown(sender: AnyObject) {
         pkNotification.toast(message:"hogehogehogehoge", style:nil)
+    }
+    
+    @IBAction func loadingButtonDown(sender: AnyObject) {
+        pkNotification.loading(true)
+        NSLog("ロード開始")
+        NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector:"onUpdate:", userInfo: nil, repeats: false)
+    }
+    
+    func onUpdate(timer: NSTimer) {
+        NSLog("ロード終わり")
+        self.pkNotification.loading(false)
+    }
+    
+    @IBAction func successButtonDown(sender: AnyObject) {
+        pkNotification.success()
+    }
+    
+    @IBAction func failedButtonDown(sender: AnyObject) {
+        pkNotification.failed()
     }
 
 }
