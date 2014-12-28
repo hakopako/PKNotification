@@ -9,16 +9,16 @@
 /*
 //-- How to use PKNotification ----------------------------------------------
 //alert - not implemented yet :(
-//PKNotification().alert()
+//PKNotification.alert()
 
 //toast
-PKNotification().toast(message:"hogehogehogehoge")
+PKNotification.toast(message:"hogehogehogehoge")
 
 //progress
-PKNotification().loading(true)
-PKNotification().loading(false)
-PKNotification().success(nil)
-PKNotification().failed("Foo")
+PKNotification.loading(true)
+PKNotification.loading(false)
+PKNotification.success(nil)
+PKNotification.failed("Foo")
 //-------------------------------------------------------------
 */
 
@@ -26,11 +26,14 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var alertButton: UIButton!
+    @IBOutlet weak var alertButton2Options: UIButton!
+    @IBOutlet weak var alertButton3OrMore: UIButton!
     @IBOutlet weak var toastButton: UIButton!
     @IBOutlet weak var loadingButton: UIButton!
     @IBOutlet weak var successButton: UIButton!
     @IBOutlet weak var failedButton: UIButton!
-    let pkNotification:PKNotification = PKNotification()
+    //let pkNotification:PKNotification = PKNotification()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,28 +46,78 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+    @IBAction func alertButtonDown(sender: AnyObject) {
+        PKNotification.alert(
+            title: "Success !!",
+            message: "ないよううううううううう\nううううう",
+            items: nil,
+            cancelButtonTitle: "O K",
+            tintColor: nil)
+        
+    }
+    
+    @IBAction func alertButton2OptionsDown(sender: AnyObject) {
+        PKNotification.alert(
+            title: "Success !!",
+            message: "ないよううううううううう\nううううう",
+            items: [
+                PKNotification.generatePKButton(
+                    title: "Foo",
+                    action: { () -> Void in
+                        NSLog("Foo is clicked.")
+                    },
+                    fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
+                    backgroundColor: nil)
+            ],
+            cancelButtonTitle: "Cancel",
+            tintColor: nil)
+    }
+    
+    @IBAction func alertButton3OrMoreDown(sender: AnyObject) {
+        PKNotification.alert(
+            title: "Success !!",
+            message: "ないよううううううううう\nううううう",
+            items: [
+                PKNotification.generatePKButton(
+                    title: "Foo",
+                    action: { () -> Void in
+                        NSLog("Foo is clicked.")
+                    },
+                    fontColor: UIColor.purpleColor(),
+                    backgroundColor: nil),
+                PKNotification.generatePKButton(
+                    title: "Bar",
+                    action: { () -> Void in
+                        NSLog("Bar is clicked.")
+                    },
+                    fontColor: nil,
+                    backgroundColor: nil)
+            ],
+            cancelButtonTitle: nil,
+            tintColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1.0))
+    }
 
     @IBAction func toastButtonDown(sender: AnyObject) {
-        pkNotification.toast(message:"hogehogehogehoge")
+        PKNotification.toast(message:"hogehogehogehoge")
     }
     
     @IBAction func loadingButtonDown(sender: AnyObject) {
-        pkNotification.loading(true)
+        PKNotification.loading(true)
         NSLog("start loading...")
         NSTimer.scheduledTimerWithTimeInterval(2.0, target: self, selector:"onUpdate:", userInfo: nil, repeats: false)
     }
     
     func onUpdate(timer: NSTimer) {
         NSLog("finish loading...")
-        self.pkNotification.loading(false)
+        PKNotification.loading(false)
     }
     
     @IBAction func successButtonDown(sender: AnyObject) {
-        pkNotification.success(nil)
+        PKNotification.success(nil)
     }
     
     @IBAction func failedButtonDown(sender: AnyObject) {
-        pkNotification.failed("Try again ...")
+        PKNotification.failed("Try again ...")
     }
 
 }
