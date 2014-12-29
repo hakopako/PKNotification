@@ -600,7 +600,7 @@ class PKNotificationClass: UIViewController {
     // MARK: - @CLASS PKProgress
     class PKProgress: UIViewController {
         
-        let kMargin:CGFloat = 5
+        let kMargin:CGFloat = 30
         let rectBounds:CGRect = UIScreen.mainScreen().bounds
         
         // MARK: - Lifecycle
@@ -661,8 +661,9 @@ class PKNotificationClass: UIViewController {
         
         func generateSuccess(m:String?){
             let successView:UIView = UIView(frame: CGRectMake((rectBounds.width - _PKNotificationSingleton.kProgressWidth)/2, (rectBounds.height - _PKNotificationSingleton.kProgressHeight)/2, _PKNotificationSingleton.kProgressWidth, _PKNotificationSingleton.kProgressHeight))
-            let imagePosY:CGFloat = (m == nil) ? (rectBounds.height - _PKNotificationSingleton.kProgressHeight)/2 + kMargin : (rectBounds.height - _PKNotificationSingleton.kProgressHeight)/2 - kMargin
-            let imageView:UIImageView = UIImageView(frame: CGRectMake((rectBounds.width - _PKNotificationSingleton.kProgressWidth)/2 + kMargin, imagePosY, successView.frame.width - kMargin*2, successView.frame.height - kMargin*2))
+            let imageSize:CGSize = CGSize(width: successView.frame.width - kMargin*2, height: successView.frame.height - kMargin*2)
+            let imagePosY:CGFloat = (rectBounds.height - _PKNotificationSingleton.kProgressHeight + imageSize.height)/2
+            let imageView:UIImageView = UIImageView(frame: CGRectMake((rectBounds.width - _PKNotificationSingleton.kProgressWidth)/2 + kMargin, (m == nil) ? imagePosY : imagePosY - 5 , imageSize.width, imageSize.height))
             let messageLabel:UILabel = UILabel()
             imageView.image = (_PKNotificationSingleton.successImage == nil ? generateImageDefaultSuccess() : _PKNotificationSingleton.successImage)
             imageView.contentMode = UIViewContentMode.ScaleAspectFit
@@ -681,8 +682,9 @@ class PKNotificationClass: UIViewController {
         
         func generateFailed(m:String?){
             let failedView:UIView = UIView(frame: CGRectMake((rectBounds.width - _PKNotificationSingleton.kProgressWidth)/2, (rectBounds.height - _PKNotificationSingleton.kProgressHeight)/2, _PKNotificationSingleton.kProgressWidth, _PKNotificationSingleton.kProgressHeight))
-            let imagePosY:CGFloat = (m == nil) ? (rectBounds.height - _PKNotificationSingleton.kProgressHeight)/2 + kMargin : (rectBounds.height - _PKNotificationSingleton.kProgressHeight)/2 - kMargin
-            let imageView:UIImageView = UIImageView(frame: CGRectMake((rectBounds.width - _PKNotificationSingleton.kProgressWidth)/2 + kMargin, imagePosY, failedView.frame.width - kMargin*2, failedView.frame.height - kMargin*2))
+            let imageSize:CGSize = CGSize(width: failedView.frame.width - kMargin*2, height: failedView.frame.height - kMargin*2)
+            let imagePosY:CGFloat = (rectBounds.height - _PKNotificationSingleton.kProgressHeight + imageSize.height)/2
+            let imageView:UIImageView = UIImageView(frame: CGRectMake((rectBounds.width - _PKNotificationSingleton.kProgressWidth)/2 + kMargin, (m == nil) ? imagePosY : imagePosY - 5, imageSize.width, imageSize.height))
             let messageLabel:UILabel = UILabel()
             imageView.image = (_PKNotificationSingleton.failedImage == nil ? generateImageDefaultFailed() : _PKNotificationSingleton.failedImage)
             failedView.backgroundColor = _PKNotificationSingleton.backgroundColorFailed
@@ -721,7 +723,7 @@ class PKNotificationClass: UIViewController {
         }
         
         func generateImageDefaultSuccess() -> UIImage {
-            let base64Str:String = "iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gwZCgg6D0P0hwAAAcxJREFUeNrt1zFKA2EUhdFf1+BKhPQWYpfSldimsHQt7sVCsBL3EQLCtYmQLhPT/LmeA+mmCG8+HvPGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgP0tyl+TeJGiIeZ3kLclHkkcToSHmX6KmJmZRUxezqKmL+TDqikPx2mvvjXmM8TzGuF3w+G6M8W1qXPpmzv65takhZhAziBkxixkxg5hBzCBmxCxmxAxihsUxr5LsFsa8S7IyNWxmEDOIGTGLGQcg2MzMGcdVkhsx0xLzQ5LXS3jxYmZJzO8HAazETEPMh8fTesL/6wDk5Jin3G42M+fEPFUYYuZYIDf7A3D6QMRMTShi5i/B7GYMxgHIOeFMtQVtZmoCEjM1IYmZmqDETM2hKGZqDkUxU/P5IWZqohYzNVGLmZqoxUxN1GKmJmoxUxO1mGmK+mv/EzM1UYuZfxW1mKmJWszURC1mpo7684SYP8XM7FFvkmwXxLxNsjExLiHqlyNRb5O8mBQNUYuZmqjFTE3UYqYm6qckTyYBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA1PsB8rC7dbwP0W4AAAAASUVORK5CYII="
+            let base64Str:String = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gwcEAgrQ5wC4QAAAXdJREFUeNrt2DFKA0EYhuHRM3gSIb2F2KX0JLYpLHMW72IhWIn3CAHhs1khlUYx8Yv7vJAuxc7/7DDMjiFJkiRJkiRJkiRJkiRJ2i3JVZJrk+jAWCZ5TPKc5NZEOjA+glKEAaUQA0ohxi7KXgf9ubH+HGOMcT/GuNzj79sxxpup/f3OyPS/panBgAEDBgwYMAQDhmDAEAwY+iWMRZLtnhjbJAtTszNgwIABA4YDXLPYGUnOklzA6MG4SfJwCg8+F4ynnQUsYHRg7B5+y8Ln/b8H+CcYlW/XXHdG5cL+/T0jycV0gNcvcDaXvlNY6Oxu4NOCt40Lnu0NfFp41Vs4+29TTQPwobBoEDCKBgKj6KCHUXTQwygaFIyigcEoQoFRhAKjCAVGEQqMIhQYXSiv0w9GEQqME0OBUYQCowgFxoFRXr6B8QLj8CirJJs9MDZJViZ2HJT1FyibJGuT6kCBUYQCowgFRhHKXZI7k5AkSZIkSZIkSZKO0Ds6sLt1lfeMOAAAAABJRU5ErkJggg=="
             let imgData:NSData = NSData(base64EncodedString: base64Str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)!
             let image:UIImage = UIImage(data: imgData)!
             
@@ -729,7 +731,7 @@ class PKNotificationClass: UIViewController {
         }
         
         func generateImageDefaultFailed() -> UIImage {
-            let base64Str:String = "iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gwZCgguFZkg+gAAA9JJREFUeNrt3U2IVWUYB/D/qwVpUxLpFKUZRZtoEZlGpe5dtB+H0IVta2+2EEYCF7lwJ7RwEdaulbQW+kBo0SLaRNEYfaiFWSZB2dOi06KYGa/XvB9nfj+4m8M8M+f5uOe8970HJgEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABujaqaqaq9VXW6qi53r9PdsZke5ru2qrZX1YmqutC9TnTH1pqI6W7u3rq+vT3Kd/sA+W43GdPZ3IUa3EIP8t13A/nuMyH9uzL35ko94JV5VVypWx/XzEl+GTL8rtbalWlbMyf5Y8jw21pr1/rU/zU9fJO+MKbYcXlqTLEGekReHFPsuLw0plhLjhHdgi8nuXvI8J9baxumLN8LSTYNGX6xtTbrCg0GemTeH1PsuLw7plgDPSJvjSl2XN4cU6w19IjWlLbtBmfbbuLfoX8P5PwQofPTNsxdvteS7BgidEffhrnXfPXtq+8+DrWHkzyc1L81tcdHPT4KAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPzPmhIMp6pakvVJ7k3yQJKHkmxN8nCSLd2xjUnu6X5uTZI/k1xNcinJD0m+TfJ1kq+SLCY51x37McnV1lqptIG+VcM7m+TxJM8n2ZPkuRH86Q+TvJfkgySfJblgyA30sEO8KcmzSeaSTNI/53w7yTtJPmqtXdQpVhriLVX1clWdr+lwvjvfLbrHP0M8U1VzVXWuptu5Lo8ZXV2dg7y5qo5VPx2rqs3W0KtjkLcmeT3J/E3+qvNJPk/yZbdD8U2S75Nc7HYxLif5NclvSX5PUl29b09yR5I7k2zodkE2Jbk/yYPdTskjSR5Lct9NnuOpJK+21hYNdP8G+Z4kh5O8MkT4F0nOJvk4ySdJPh3FB7Lug+kTSZ5M8nSSZ5I8OsSvOp7kcGvtkntzP4Z57gZv2d9V1cmq2tdd0SfqDtOd18nuPG/EnGmY7kGeraozAzZ7sareqKrdU5bj7u68FwfM80xVzZqO6RvmXQM2+FRV7elJznu6fAaxy5RMT2MPXKeZP1XVkb7u33b76Ue6PFdywLRMfjMPrdDAK1X1WlWtXyW1WN/le2WFmhwyNZPbwIMrNO54VW1cpXXZ2OW/nIOmZ/Katn+ZZp21XvzX54qzy9RpvwpNTqO2LdOko6qzZL2OLlOvbaoz/uasW6Ix16pqXnVWrNt8V6f/Wqc6423MwhJPoO1UmYFqt3OJJwsXVAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIC++wszTf1Eb5pZVwAAAABJRU5ErkJggg=="
+            let base64Str:String = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gwcEAgdjCaXeAAAAz9JREFUeNrt3D1sTWEcx/Hv4yWhioi2BFUhFjGIKvHS7h26t43UwMruZZBUJAYGWxODQbCZxCzxEonBIBYhWvHSllQpkVA/yzMI9173ntuee87p75Pc5aTPef4vec55+gwHzMzMzMzMzMzMzMzMzMzMzBYCSc2SBiTdljQdf7fjteYC5rtYUpekEUkT8TcSry1udHAD+r+BAjWjq4p8uxoV3LCqN1yAZgzVkO9QFldGYVZKlStjTlZKSPLOAL4kzG1lCGEmb+8M4GfC4UtCCLO1DFiUYJK+OvLry+EC2Z3m2CQNOVxHgIdz2JBjaY5N8siaBlYlDPBzCGF1zh5ZE0BrwuGTIYS2+V4hNo+SNOReHfPdy2GNbqU5NklDrtUR4LUcNuRKmmO97c37tjcWdDBBcIN5a0bMdxbYm2Do3lqb4aOTohyd1HiE4sPFlIP08XtWjt/NzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMbG6ErAYmKQBNwFpgA7AZ6AC2AO3xWguwJv7dIuAX8A2YAj4Ab4HXwCtgFBiL1z4C30IIckPKF78N2AEcBHqBAylM/QC4A9wHngETjW5SaGATWoH9QD+QpY8L3ABuAg9DCJOFfj5Kapd0XNK48mE8xttepCY0S+qXNKZ8G4t5NOe1EZskXVIxXZK0KRfvEEkdwHmSfcLpT+PAc+Bl3CG9Ad4Dk3EXNQ18Bb4DPwDFfJYCy4AVwOq4C2sF1gMb405tK7AdWFdnjNeBUyGE0cw1RNIa4CxwIsHwF8Aj4DHwBHiaxgs1bix2AruAPcA+YFuCW10GzoYQprLyeOqvccm/k3Q1foOqI2OP2o4Y19UYZy36Gx18m6S7VQY7KumipJ6cvQt7YtyjVeZ5V1JbIwLtrjLA65J6C7Jj7I35VKM7zcCO/ieYT5LOFWr//u//U+dinpUcTSOY0xUCmJF0RlLTQjgIlNQU852pUJPT8xnAyQoTX5bUshBPaCW1xPzLOTkfkx4pM9mjVJ+X2W5Md6xHKUfmcqLOMpNccBtK1utCmXp1zsXNl5e48aykQZe+Yt0GY53+trzeGw+XOAE95JJXVbtDJU62h10ZMzMzMzPLkt8vA/1E0dnMwQAAAABJRU5ErkJggg=="
             let imgData:NSData = NSData(base64EncodedString: base64Str, options: NSDataBase64DecodingOptions.IgnoreUnknownCharacters)!
             let image:UIImage = UIImage(data: imgData)!
             

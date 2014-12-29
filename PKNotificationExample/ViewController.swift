@@ -49,7 +49,7 @@ class ViewController: UIViewController {
     @IBAction func alertButtonDown(sender: AnyObject) {
         PKNotification.alert(
             title: "Success !!",
-            message: "ないよううううううううう\nううううう",
+            message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
             items: nil,
             cancelButtonTitle: "O K",
             tintColor: nil)
@@ -58,8 +58,8 @@ class ViewController: UIViewController {
     
     @IBAction func alertButton2OptionsDown(sender: AnyObject) {
         PKNotification.alert(
-            title: "Success !!",
-            message: "ないよううううううううう\nううううう",
+            title: "Notice",
+            message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
             items: [
                 PKNotification.generatePKButton(
                     title: "Foo",
@@ -75,8 +75,8 @@ class ViewController: UIViewController {
     
     @IBAction func alertButton3OrMoreDown(sender: AnyObject) {
         PKNotification.alert(
-            title: "Success !!",
-            message: "ないよううううううううう\nううううう",
+            title: "Done",
+            message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
             items: [
                 PKNotification.generatePKButton(
                     title: "Foo",
@@ -117,7 +117,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func failedButtonDown(sender: AnyObject) {
-        PKNotification.failed("Try again ...")
+        PKNotification.failed("Failed ...")
     }
 
 }

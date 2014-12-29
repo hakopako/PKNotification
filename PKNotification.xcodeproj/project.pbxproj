@@ -18,6 +18,7 @@
 		D2FE3FF21A4C41C900C915A0 /* Loading.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FF11A4C41C900C915A0 /* Loading.png */; };
 		D2FE3FF61A4C41E000C915A0 /* Failed.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FF51A4C41E000C915A0 /* Failed.png */; };
 		D2FE3FF81A4C41F500C915A0 /* Success.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FF71A4C41F500C915A0 /* Success.png */; };
+		D2FE3FFE1A50D19F00C915A0 /* images.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FFD1A50D19F00C915A0 /* images.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		D2FE3FF11A4C41C900C915A0 /* Loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Loading.png; sourceTree = "<group>"; };
 		D2FE3FF51A4C41E000C915A0 /* Failed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Failed.png; sourceTree = "<group>"; };
 		D2FE3FF71A4C41F500C915A0 /* Success.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Success.png; sourceTree = "<group>"; };
+		D2FE3FFD1A50D19F00C915A0 /* images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = images.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 		D292DADC1A4AA7E5006268E9 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D2FE3FFD1A50D19F00C915A0 /* images.png */,
 				D2FE3FF71A4C41F500C915A0 /* Success.png */,
 				D2FE3FF51A4C41E000C915A0 /* Failed.png */,
 				D2FE3FF11A4C41C900C915A0 /* Loading.png */,
@@ -218,6 +221,7 @@
 				D2FE3FF21A4C41C900C915A0 /* Loading.png in Resources */,
 				D292DAE41A4AA7E5006268E9 /* Main.storyboard in Resources */,
 				D292DAE91A4AA7E5006268E9 /* LaunchScreen.xib in Resources */,
+				D2FE3FFE1A50D19F00C915A0 /* images.png in Resources */,
 				D292DAE61A4AA7E5006268E9 /* Images.xcassets in Resources */,
 				D2FE3FF01A4C41B500C915A0 /* Toast.png in Resources */,
 				D2FE3FF81A4C41F500C915A0 /* Success.png in Resources */,
