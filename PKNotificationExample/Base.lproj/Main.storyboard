@@ -19,8 +19,47 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M4T-TP-fJD">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lrP-Ii-f9T">
                                 <rect key="frame" x="277" y="28" width="46" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="HHS-Gq-8v9"/>
+                                    <constraint firstAttribute="width" constant="46" id="fl4-bA-9Z6"/>
+                                </constraints>
+                                <state key="normal" title="Alert">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="alertButtonDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9KQ-gN-IAu"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ca7-aU-2BP">
+                                <rect key="frame" x="240" y="66" width="120" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="RHd-Aw-iEP"/>
+                                    <constraint firstAttribute="width" constant="120" id="oGY-HC-xMH"/>
+                                </constraints>
+                                <state key="normal" title="Alert ( 2 options )">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="alertButton2OptionsDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="SDj-xg-BEs"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AfW-Ap-k8K">
+                                <rect key="frame" x="221" y="104" width="158" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="158" id="jJ5-BA-RNy"/>
+                                    <constraint firstAttribute="height" constant="30" id="r6A-HE-Go1"/>
+                                </constraints>
+                                <state key="normal" title="Alert ( 3 or more )">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="alertButton3OrMoreDown:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0NK-Bl-bg9"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M4T-TP-fJD">
+                                <rect key="frame" x="277" y="142" width="46" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="b5K-3A-NRx"/>
                                     <constraint firstAttribute="width" constant="46" id="tiP-gC-epp"/>
@@ -33,7 +72,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="raa-MO-oNu">
-                                <rect key="frame" x="255" y="66" width="90" height="30"/>
+                                <rect key="frame" x="255" y="180" width="90" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="90" id="pxQ-FP-rep"/>
                                     <constraint firstAttribute="height" constant="30" id="q4e-67-6At"/>
@@ -46,7 +85,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7ze-lv-TS2">
-                                <rect key="frame" x="266" y="104" width="68" height="30"/>
+                                <rect key="frame" x="266" y="218" width="68" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="6H0-Ts-2Un"/>
                                     <constraint firstAttribute="width" constant="68" id="EB7-oO-seY"/>
@@ -59,7 +98,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZfP-4d-ebk">
-                                <rect key="frame" x="277" y="142" width="46" height="30"/>
+                                <rect key="frame" x="277" y="256" width="46" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="46" id="fKR-vf-ZbF"/>
                                     <constraint firstAttribute="height" constant="30" id="zqY-cP-11n"/>
@@ -72,19 +111,36 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="raa-MO-oNu" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="855-2q-HbP"/>
                             <constraint firstItem="7ze-lv-TS2" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="8nh-Xw-WbV"/>
+                            <constraint firstItem="Ca7-aU-2BP" firstAttribute="top" secondItem="lrP-Ii-f9T" secondAttribute="bottom" constant="8" id="C3K-cq-WZ9"/>
+                            <constraint firstItem="lrP-Ii-f9T" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="GGa-RL-eC0"/>
                             <constraint firstItem="7ze-lv-TS2" firstAttribute="top" secondItem="raa-MO-oNu" secondAttribute="bottom" constant="8" id="Na6-k4-KWK"/>
+                            <constraint firstItem="AfW-Ap-k8K" firstAttribute="top" secondItem="Ca7-aU-2BP" secondAttribute="bottom" constant="8" id="Ox1-1D-GqN"/>
+                            <constraint firstItem="Ca7-aU-2BP" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="UnL-VN-xqt"/>
                             <constraint firstItem="ZfP-4d-ebk" firstAttribute="top" secondItem="7ze-lv-TS2" secondAttribute="bottom" constant="8" id="Z3t-el-2j0"/>
                             <constraint firstItem="raa-MO-oNu" firstAttribute="top" secondItem="M4T-TP-fJD" secondAttribute="bottom" constant="8" id="bDC-gU-fgP"/>
+                            <constraint firstItem="M4T-TP-fJD" firstAttribute="top" secondItem="lrP-Ii-f9T" secondAttribute="bottom" constant="8" id="gD4-Sx-fSZ"/>
                             <constraint firstItem="M4T-TP-fJD" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="gDE-Sr-J5F"/>
+                            <constraint firstItem="lrP-Ii-f9T" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="geo-9A-Kk4"/>
+                            <constraint firstItem="AfW-Ap-k8K" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="hvd-JB-OJ3"/>
+                            <constraint firstItem="M4T-TP-fJD" firstAttribute="top" secondItem="AfW-Ap-k8K" secondAttribute="bottom" constant="8" id="nr4-hG-5M4"/>
                             <constraint firstItem="ZfP-4d-ebk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="vt8-Qe-c8S"/>
                             <constraint firstItem="M4T-TP-fJD" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerXWithinMargins" id="xF1-pA-heI"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="gD4-Sx-fSZ"/>
+                                <exclude reference="gDE-Sr-J5F"/>
+                            </mask>
+                        </variation>
                     </view>
                     <connections>
+                        <outlet property="alertButton" destination="lrP-Ii-f9T" id="mMl-fT-8o8"/>
+                        <outlet property="alertButton2Options" destination="Ca7-aU-2BP" id="eyV-Xo-nnF"/>
+                        <outlet property="alertButton3OrMore" destination="AfW-Ap-k8K" id="c6p-Gu-zwK"/>
                         <outlet property="failedButton" destination="ZfP-4d-ebk" id="Yyz-Qk-sDy"/>
                         <outlet property="loadingButton" destination="raa-MO-oNu" id="7be-D5-yrs"/>
                         <outlet property="successButton" destination="7ze-lv-TS2" id="HLb-uF-GsS"/>
