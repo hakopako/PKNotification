@@ -3,6 +3,7 @@ PKNotification
 Simple and customizable notification functions(Toast, Progress, Loading and Alert) in Swift.  
 Target: iOS7 or later
   
+Feel free to send me your feedback and PR.  
   
 # v0.0.2
 functions  
@@ -12,13 +13,16 @@ functions
    
 
 # UI
+<img src="https://raw.githubusercontent.com/hakopako/PKNotification/master/PKNotificationExample/PKNotification.gif">
 <img src="https://raw.githubusercontent.com/hakopako/PKNotification/master/PKNotificationExample/images.png">
 
 # How to use
-1. Add `PKNotification/PKNotification.swift` into your project.
-2. There is a global variable named `PKNotification`. Use the variable and call methods like so
-```swift
-//alert 
+1. Add `PKNotification/PKNotification.swift` into your project.  
+2. There is a global variable named `PKNotification`. Use the variable and call methods like so  
+
+alert
+
+```swift 
 //-- simple 
 PKNotification.alert(
     title: "Success !!",
@@ -42,22 +46,27 @@ PKNotification.alert(
     ],
     cancelButtonTitle: "Cancel",
     tintColor: nil)
-  
-  
-//toast
-PKNotification.toast(message:"hogehogehogehoge")
+```
 
-//progress
-PKNotification.loading(true)
-PKNotification.loading(false)
-PKNotification.success(nil)
-PKNotification.failed("Foo")
+toast
+
+```swift
+PKNotification.toast("hogehogehogehoge")
+```
+
+progress
+
+```swift
+PKNotification.loading(true)  // show loading view.
+PKNotification.loading(false) // hide loading view.
+PKNotification.success(nil)   // show default success image.
+PKNotification.failed("Foo")  // show default failed image with message.
 ```
 
 * success(), failed() have default images in `PKNotification/PKNotification.swift`
 
 # incoming improvements
-- fix architecture to customize UI easily
+- fix architecture to customize UI easier
 - fix rotate
   
   
