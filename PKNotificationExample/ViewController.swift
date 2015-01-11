@@ -98,7 +98,8 @@ class ViewController: UIViewController {
     }
 
     @IBAction func toastButtonDown(sender: AnyObject) {
-        PKNotification.toast(message:"hogehogehogehoge")
+        PKNotification.toastBackgroundColor = UIColor.purpleColor()
+        PKNotification.toast("hogehogehogehoge")
     }
     
     @IBAction func loadingButtonDown(sender: AnyObject) {
@@ -113,6 +114,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func successButtonDown(sender: AnyObject) {
+        PKNotification.successBackgroundColor = UIColor.blueColor()
         PKNotification.success(nil)
     }
     
