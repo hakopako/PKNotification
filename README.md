@@ -5,11 +5,8 @@ Target: iOS7 or later
   
 Feel free to send me your feedback and PR.  
   
-# v0.0.2
-functions  
-- Alert  
-- Toast message  
-- Progress(Success, Failed, Loading)  
+### v0.0.3
+fix architecture to customize UI easier
    
 
 # UI
@@ -20,18 +17,22 @@ functions
 1. Add `PKNotification/PKNotification.swift` into your project.  
 2. There is a global variable named `PKNotification`. Use the variable and call methods like so  
 
-alert
+### alert
+
+simple alert (title, message and dissmiss button)
 
 ```swift 
-//-- simple 
 PKNotification.alert(
     title: "Success !!",
     message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
     items: nil,
     cancelButtonTitle: "O K",
     tintColor: nil)
+```
 
-//-- optional
+optional alert (title, message, dissmiss button and other buttons with actions)
+
+```
 PKNotification.alert(
     title: "Notice",
     message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
@@ -48,13 +49,43 @@ PKNotification.alert(
     tintColor: nil)
 ```
 
-toast
+custom
+
+```swift
+PKNotification.alertWidth   //CGFloat 
+PKNotification.alertMargin  //CGFloat
+PKNotification.alertTitleFontColor    //UIColor
+PKNotification.alertTitleFontStyle    //UIFont
+PKNotification.alertMessageFontColor  //UIColor
+PKNotification.alertMEssageFontStyle  //UIFont
+PKNotification.alertButtonFontColor   //UIColor
+PKNotification.alertBackgroundColor   //UIColor
+PKNotification.alertCornerRadius      //CGFloat
+
+```
+
+
+
+### toast
 
 ```swift
 PKNotification.toast("hogehogehogehoge")
 ```
 
-progress
+custom
+
+```swift
+PKNotification.toastMargin   //CGFloat
+PKNotification.toastHeight   //CGFloat
+PKNotification.toastAlpha    //CGFloat
+PKNotification.toastRadious  //CGFloat
+PKNotification.toastBackgroundColor  //UIColor
+PKNotification.toastFontColor  //UIColor
+PKNotification.toastFontStyle  //UIFont
+
+```
+
+### progress
 
 ```swift
 PKNotification.loading(true)  // show loading view.
@@ -64,40 +95,31 @@ PKNotification.failed("Foo")  // show default failed image with message.
 ```
 
 * success(), failed() have default images in `PKNotification/PKNotification.swift`
+  
+  
+custom
+
+```swift
+PKNotification.loadingBackgroundColor       //UIColor
+PKNotification.loadingActiveIndicatorStyle  //UIActivityIndicatorViewStyle
+PKNotification.successBackgroundColor       //UIColor
+PKNotification.successImage  //UIImage *if it's nil, set default image automatically
+PKNotification.failedBackgroundColor        //UIColor
+PKNotification.failedImage   //UIImage *if it's nil, set default image automatically
+
+```
 
 # incoming improvements
-- fix architecture to customize UI easier
 - fix rotate
   
   
 # MIT License
 
-```
-Copyright (c) 2014 hakopako.
+MIT
 
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
 
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-```
-
-History
-=======
-# v0.0.1
+# History
+### v0.0.1
 - Toast message
 - Progress(Success, Failed, Loading)
 
