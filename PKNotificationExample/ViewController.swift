@@ -8,8 +8,8 @@
 
 /*
 //-- How to use PKNotification ----------------------------------------------
-//alert - not implemented yet :(
-//PKNotification.alert()
+alert - not implemented yet :(
+PKNotification.alert()
 
 //toast
 PKNotification.toast(message:"hogehogehogehoge")
@@ -37,6 +37,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        PKNotification.alertCornerRadius = 1
     }
     
     override func viewDidAppear(animated: Bool) {

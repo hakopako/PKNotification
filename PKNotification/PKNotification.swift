@@ -35,10 +35,8 @@ let PKNotification:PKNotificationClass = PKNotificationClass()
 
 // MARK: - @CLASS PKNotificationSingleton
 class PKNotificationSingleton  {
-    var vcCache:NSCache = NSCache()
-    var progressVC:PKNotificationClass.PKProgress? = nil
-    var loadingBackgroundView:UIView? = nil
-    var alertBackgroundView:UIView? = nil
+    var vcCollection:Array<UIViewController> = Array()
+    var isLoading:Bool = false
 }
 
 // MARK: - @CLASS PKNotification
@@ -118,26 +116,19 @@ class PKNotificationClass: UIViewController {
     
     // MARK: - Call methods
     func alert(title t:String?, message m:String?, items i:Array<PKButton>?, cancelButtonTitle c:String?, tintColor tint:UIColor?) {
-        let bgView:UIView = generateBackground(color: UIColor.clearColor(), uiEnabled: true)
-        let bgColoredView:UIView = UIView(frame: self.view.frame)
-        bgColoredView.backgroundColor = UIColor.blackColor()
-        bgColoredView.alpha = 0.3
         let alertVC:PKAlert = PKAlert(title:t, message:m, items:i, cancelButtonTitle:c, tintColor:tint, parent: self)
-        _PKNotificationSingleton.vcCache.setObject(alertVC, forKey: alertVC)
+        alertVC.view.alpha = 0
+        _PKNotificationSingleton.vcCollection.append(alertVC)
+        alertVC.view.center = UIApplication.sharedApplication().windows[0].center
+        UIApplication.sharedApplication().windows[0].addSubview(alertVC.view)
         
-        bgView.addSubview(bgColoredView)
-        bgView.addSubview(alertVC.view)
-        bgView.alpha = 0
-        _PKNotificationSingleton.alertBackgroundView = bgView
-        UIApplication.sharedApplication().windows[0].addSubview(_PKNotificationSingleton.alertBackgroundView!)
-        
-        bgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+        alertVC.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
         UIView.animateWithDuration(0.1,
             delay: 0,
             options: UIViewAnimationOptions.CurveLinear,
             animations: { () -> Void in
-                _PKNotificationSingleton.alertBackgroundView!.alpha = 1
-                _PKNotificationSingleton.alertBackgroundView!.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                alertVC.view.alpha = 1
+                alertVC.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
             },
             completion: { (finished:Bool) -> Void in
 
@@ -151,110 +142,107 @@ class PKNotificationClass: UIViewController {
     }
 
     func toast(message:String!) {
-        let bgView:UIView = generateBackground(color: UIColor.clearColor(), uiEnabled:false)
         let toastVC:PKToast = PKToast(message: message, parent: self)
-        _PKNotificationSingleton.vcCache.setObject(toastVC, forKey: toastVC)
+        _PKNotificationSingleton.vcCollection.append(toastVC)
 
-        bgView.addSubview(toastVC.view)
-        bgView.alpha = 0
-        UIApplication.sharedApplication().windows[0].addSubview(bgView)
+        toastVC.view.alpha = 0
+        UIApplication.sharedApplication().windows[0].addSubview(toastVC.view)
 
         UIView.animateWithDuration(0.3,
                               delay: 0,
                             options: UIViewAnimationOptions.CurveLinear,
                          animations: { () -> Void in
-                                    bgView.alpha = 1
+                                    toastVC.view.alpha = 1
                          },
                          completion: { (finished:Bool) -> Void in
                             UIView.animateWithDuration(0.3,
                                                   delay: 2,
                                                 options: UIViewAnimationOptions.CurveLinear,
                                              animations: { () -> Void in
-                                                    bgView.alpha = 0
+                                                    toastVC.view.alpha = 0
                                              },
                                              completion: { (finished:Bool) -> Void in
-                                                    bgView.removeFromSuperview()
-                                                    _PKNotificationSingleton.vcCache.removeObjectForKey(toastVC)
+                                                self.view.removeFromSuperview()
+                                                self.removeVCCollectionByObject(toastVC)
                                              })
                         })
-        
     }
     
     func loading(flag:Bool) {
-        let isLoading:Bool = !(_PKNotificationSingleton.progressVC == nil)
-        if(flag && !isLoading){
-            let bgView:UIView = generateBackground(color: UIColor.clearColor(), uiEnabled:true)
+    
+        if(flag && !_PKNotificationSingleton.isLoading){
             let progressVC:PKProgress = PKProgress(PKProgressType.Loading, nil, self)
-            _PKNotificationSingleton.progressVC = progressVC
-            
-            bgView.addSubview(_PKNotificationSingleton.progressVC!.view)
-            _PKNotificationSingleton.loadingBackgroundView = bgView
-            UIApplication.sharedApplication().windows[0].addSubview(_PKNotificationSingleton.loadingBackgroundView!)
-        } else if(!flag && isLoading) {
-            _PKNotificationSingleton.loadingBackgroundView?.removeFromSuperview()
-            _PKNotificationSingleton.progressVC = nil
-            _PKNotificationSingleton.loadingBackgroundView = nil
+            _PKNotificationSingleton.vcCollection.append(progressVC)
+            UIApplication.sharedApplication().windows[0].addSubview(progressVC.view)
+            _PKNotificationSingleton.isLoading = true
+        } else if(!flag && _PKNotificationSingleton.isLoading) {
+            var cnt:Int = 0
+            for anyObject in _PKNotificationSingleton.vcCollection {
+                if (anyObject.isKindOfClass(PKProgress)) {
+                    if (anyObject as PKProgress).type == PKProgressType.Loading {
+                        (anyObject as PKProgress).view.removeFromSuperview()
+                        _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
+                        _PKNotificationSingleton.isLoading = false
+                    }
+                }
+            }
         }
+
     }
     
     func success(message:String?) {
-        let bgView:UIView = generateBackground(color: UIColor.clearColor(), uiEnabled:false)
         let progressVC:PKProgress = PKProgress(PKProgressType.Success, message, self)
-        _PKNotificationSingleton.progressVC = progressVC
+        _PKNotificationSingleton.vcCollection.append(progressVC)
+        progressVC.view.alpha = 0
+        UIApplication.sharedApplication().windows[0].addSubview(progressVC.view)
         
-        bgView.addSubview(_PKNotificationSingleton.progressVC!.view)
-        bgView.alpha = 0
-        UIApplication.sharedApplication().windows[0].addSubview(bgView)
-        
-        bgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+        progressVC.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
         UIView.animateWithDuration(0.1,
             delay: 0,
             options: UIViewAnimationOptions.CurveLinear,
             animations: { () -> Void in
-                bgView.alpha = 1
-                bgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                progressVC.view.alpha = 1
+                progressVC.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
             },
             completion: { (finished:Bool) -> Void in
                 UIView.animateWithDuration(0.1,
                     delay: 2,
                     options: UIViewAnimationOptions.CurveLinear,
                     animations: { () -> Void in
-                        bgView.alpha = 0
+                        progressVC.view.alpha = 0
                     },
                     completion: { (finished:Bool) -> Void in
-                        bgView.removeFromSuperview()
-                        _PKNotificationSingleton.progressVC = nil
+                        progressVC.view.removeFromSuperview()
+                        self.removeVCCollectionByObject(progressVC)
                 })
         })
+
     }
     
     func failed(message:String?) {
-        let bgView:UIView = generateBackground(color: UIColor.clearColor(), uiEnabled:false)
         let progressVC:PKProgress = PKProgress(PKProgressType.Failed, message, self)
-        _PKNotificationSingleton.progressVC = progressVC
-        
-        bgView.addSubview(_PKNotificationSingleton.progressVC!.view)
-        bgView.alpha = 0
-        UIApplication.sharedApplication().windows[0].addSubview(bgView)
+        _PKNotificationSingleton.vcCollection.append(progressVC)
+        progressVC.view.alpha = 0
+        UIApplication.sharedApplication().windows[0].addSubview(progressVC.view)
 
-        bgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+        progressVC.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
         UIView.animateWithDuration(0.1,
             delay: 0,
             options: UIViewAnimationOptions.CurveLinear,
             animations: { () -> Void in
-                bgView.alpha = 1
-                bgView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
+                progressVC.view.alpha = 1
+                progressVC.view.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1, 1);
             },
             completion: { (finished:Bool) -> Void in
                 UIView.animateWithDuration(0.1,
                     delay: 2,
                     options: UIViewAnimationOptions.CurveLinear,
                     animations: { () -> Void in
-                        bgView.alpha = 0
+                        progressVC.view.alpha = 0
                     },
                     completion: { (finished:Bool) -> Void in
-                        bgView.removeFromSuperview()
-                        _PKNotificationSingleton.progressVC = nil
+                        progressVC.view.removeFromSuperview()
+                        self.removeVCCollectionByObject(progressVC)
                 })
         })
     }
@@ -262,30 +250,51 @@ class PKNotificationClass: UIViewController {
     // MARK: - Common methods
     private func generateBackground(#color:UIColor, uiEnabled:Bool) -> UIView {
         var backgroundView = UIView()
-        backgroundView.frame = UIScreen.mainScreen().bounds
+        let mainScreenFrame:CGRect = UIScreen.mainScreen().bounds
+        let length:CGFloat = (mainScreenFrame.width < mainScreenFrame.height) ? mainScreenFrame.height : mainScreenFrame.width
+        let diff:CGFloat = abs(mainScreenFrame.height - mainScreenFrame.width)
+        backgroundView.frame = CGRectMake(0, 0, length, length)
         backgroundView.backgroundColor = color
         backgroundView.userInteractionEnabled = uiEnabled
         return backgroundView
     }
-    
-    private func rotated()
+
+    func rotated()
     {
-        //TODO: Implement
-        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
-        {
-            //println("landscape")
+        var cnt:Int = 0
+        for anyObject in _PKNotificationSingleton.vcCollection {
+            if (anyObject.isKindOfClass(PKAlert)) {
+                (anyObject as PKAlert).rotate()
+            }
+            
+            if (anyObject.isKindOfClass(PKToast)) {
+                (anyObject as PKToast).rotate()
+            }
+
+            if (anyObject.isKindOfClass(PKProgress)) {
+                (anyObject as PKProgress).rotate()
+            }
+            
         }
         
-        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
-        {
-            //println("portraight")
-        }
         
+    }
+    
+    func removeVCCollectionByObject(target:UIViewController) -> Void {
+        var cnt:Int = 0;
+        for vc:UIViewController in _PKNotificationSingleton.vcCollection {
+            if (vc == target){
+                _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
+                break;
+            }
+        }
     }
 
     // MARK: - @CLASS PKAlert
     class PKAlert: UIViewController {
         var parent:PKNotificationClass!
+        let alertView:UIView = UIView(frame: CGRectMake(0, 0, 100, 100))
+        
         // MARK: - Lifecycle
         init(title t:String?, message m:String?, items i:Array<PKButton>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
             /* initialize alert parts, resize them and set colors */
@@ -338,7 +347,7 @@ class PKNotificationClass: UIViewController {
         
         required override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
             super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-            //NSLog("########### \(NSStringFromClass(self.dynamicType)) is initialized. ###########")
+            //NSLog("########### \(NSStringFromClass(self.dynamicType)): \(self) is initialized. ###########")
         }
         
         override func viewDidLoad() {
@@ -350,7 +359,7 @@ class PKNotificationClass: UIViewController {
         }
         
         deinit {
-            //NSLog("########### \(NSStringFromClass(self.dynamicType)) is deinitialized. ###########")
+            //NSLog("########### \(NSStringFromClass(self.dynamicType)): \(self) is deinitialized. ###########")
         }
         
         // MARK: - UI
@@ -358,7 +367,6 @@ class PKNotificationClass: UIViewController {
             /* set layout and adjust button shape */
             let margin:CGFloat = parent.alertMargin
             let lineColor:UIColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
-            let alertView:UIView = UIView(frame: CGRectMake(0, 0, 100, 100))
             let titlePosY:CGFloat = margin
             let messagePosY:CGFloat = (titleLabel == nil) ? titlePosY + margin*2 : titlePosY + titleLabel!.frame.height + margin
             var buttonPosY:CGFloat = (messageLabel == nil) ? messagePosY + margin*2 : messagePosY + messageLabel!.frame.height + margin*2
@@ -431,33 +439,80 @@ class PKNotificationClass: UIViewController {
             
             cancelButton.frame.offset(dx: 0, dy: buttonPosY)
             
+            let alertBackgroundView = parent.generateBackground(color: UIColor.blackColor(), uiEnabled: true)
+            alertBackgroundView.alpha = 0.3
+            
             let kAlertHeight:CGFloat = cancelButton.frame.origin.y + cancelButton.frame.height
             alertView.frame.size = CGSizeMake(parent.alertWidth, kAlertHeight)
             alertView.backgroundColor = parent.alertBackgroundColor
             alertView.layer.cornerRadius = parent.alertCornerRadius
-            alertView.center = self.view.center
             if(titleLabel != nil){ alertView.addSubview(titleLabel!)}
             if(messageLabel != nil){ alertView.addSubview(messageLabel!)}
             alertView.addSubview(cancelButton)
-            self.view.addSubview(alertView)
+            self.view.addSubview(alertBackgroundView)
+            alertView.center = UIApplication.sharedApplication().windows[0].center
+            self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(alertView) : alertView )
+            
         }
 
         // MARK: - button action
         func buttonDown(sender: PKButton!) -> Void {
             sender.actionBlock()
-            
             //Dissmiss alert
             UIView.animateWithDuration(0.1,
                 delay: 0,
                 options: UIViewAnimationOptions.CurveLinear,
                 animations: { () -> Void in
-                    _PKNotificationSingleton.alertBackgroundView!.alpha = 0
+                    self.view.alpha = 0
                 },
                 completion: { (finished:Bool) -> Void in
-                    _PKNotificationSingleton.alertBackgroundView!.removeFromSuperview()
-                    _PKNotificationSingleton.vcCache.removeObjectForKey(self)
+                    self.view.removeFromSuperview()
+                    var cnt:Int = 0;
+                    for vc:UIViewController in _PKNotificationSingleton.vcCollection {
+                        if (vc == self){
+                            _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
+                            break;
+                        }
+                        
+                    }
             })
         }
+        
+        func rotate() -> Void {
+            let point:CGPoint = UIApplication.sharedApplication().windows[0].center
+            if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+            {
+                alertView.center = point
+            }
+            
+            if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+            {
+                alertView.center = point
+            }
+        }
+        
+        
+        /**
+        * For iOS7
+        */
+        func rotate4os7(v:UIView) -> UIView {
+            switch(UIApplication.sharedApplication().statusBarOrientation){
+            case .Portrait: break
+            case .PortraitUpsideDown:
+                v.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI), 0.0, 0.0, 1.0)
+                break
+            case .LandscapeLeft:
+                v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * (-1) * CGFloat(M_PI), 0.0, 0.0, 1.0)
+                break
+            case .LandscapeRight:
+                v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * CGFloat(M_PI), 0.0, 0.0, 1.0)
+                break
+            case .Unknown: break
+            }
+            
+            return v
+        }
+        
     }
     
     // MARK: - @CLASS PKButton
@@ -487,6 +542,8 @@ class PKNotificationClass: UIViewController {
     class PKToast: UIViewController {
         var parent:PKNotificationClass!
         let rectBounds:CGRect = UIScreen.mainScreen().bounds
+        let toastView:UIView = UIView()
+        let messageLabel:UILabel = UILabel()
         
         //toast Rect
         var posX:CGFloat = 0
@@ -528,8 +585,6 @@ class PKNotificationClass: UIViewController {
         
         // MARK: - generate
         func generate(message m:String) {
-            let toastView:UIView = UIView()
-            let messageLabel:UILabel = UILabel()
             posX = parent.toastMargin
             posY = rectBounds.size.height - parent.toastMargin - parent.toastHeight
             width = rectBounds.size.width - parent.toastMargin * 2
@@ -546,13 +601,37 @@ class PKNotificationClass: UIViewController {
             messageLabel.textAlignment = NSTextAlignment.Center
             messageLabel.text = m
             toastView.addSubview(messageLabel)
-            self.view.addSubview( (parent.onVersion < 8.0) ? rotate(toastView) : toastView )
+            self.view.userInteractionEnabled = false
+            self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(toastView) : toastView )
+            
+            if(parent.onVersion < 8.0){
+                if(UIApplication.sharedApplication().statusBarOrientation == .LandscapeLeft
+                    || UIApplication.sharedApplication().statusBarOrientation == .LandscapeRight){
+                    messageLabel.frame.size.width = height
+                } else {
+                    messageLabel.frame.size.width = width
+                }
+            }
+            
+        }
+        
+        func rotate() -> Void {
+            let point:CGPoint = UIApplication.sharedApplication().windows[0].center
+            if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+            {
+                //progressView.center = point
+            }
+            
+            if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+            {
+                //progressView.center = point
+            }
         }
         
         /**
          * For iOS7
          */
-        func rotate(v:UIView) -> UIView {
+        func rotate4os7(v:UIView) -> UIView {
             switch(UIApplication.sharedApplication().statusBarOrientation){
                 case .Portrait: break
                 case .PortraitUpsideDown:
@@ -592,19 +671,24 @@ class PKNotificationClass: UIViewController {
         var parent:PKNotificationClass!
         let kMargin:CGFloat = 30
         let rectBounds:CGRect = UIScreen.mainScreen().bounds
+        let progressView:UIView = UIView()
+        let type:PKProgressType = .Loading
         
         // MARK: - Lifecycle
-        init(_ type:PKProgressType, _ m:String?, _ p:PKNotificationClass) {
+        init(_ t:PKProgressType, _ m:String?, _ p:PKNotificationClass) {
             super.init()
             parent = p
-            switch(type){
+            switch(t){
                 case .Loading:
+                    type = t
                     generateLoading()
                     break
                 case .Success:
+                    type = t
                     generateSuccess(m)
                     break
                 case .Failed:
+                    type = t
                     generateFailed(m)
                     break
             }
@@ -637,35 +721,34 @@ class PKNotificationClass: UIViewController {
         
         // MARK: - generate
         func generateLoading(){
-            let loadingView:UIView = UIView()
-            loadingView.frame = CGRectMake(0, 0, parent.progressWidth, parent.progressHeight)
-            loadingView.center = self.view.center
-            loadingView.backgroundColor = parent.loadingBackgroundColor
-            loadingView.alpha = parent.progressAlpha
-            loadingView.layer.cornerRadius = parent.progressRadious
+            progressView.frame = CGRectMake(0, 0, parent.progressWidth, parent.progressHeight)
+            progressView.center = self.view.center
+            progressView.backgroundColor = parent.loadingBackgroundColor
+            progressView.alpha = parent.progressAlpha
+            progressView.layer.cornerRadius = parent.progressRadious
             
             let ai:UIActivityIndicatorView = UIActivityIndicatorView() as UIActivityIndicatorView
-            ai.center = loadingView.center
+            ai.center = progressView.center
             ai.activityIndicatorViewStyle = parent.loadingActiveIndicatorStyle
             ai.hidesWhenStopped = true
             ai.startAnimating()
 
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate(loadingView) : loadingView)
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate(ai) : ai)
+            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(progressView) : progressView)
+            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(ai) : ai)
+            self.view.userInteractionEnabled = false
         }
         
         func generateSuccess(m:String?){
-            let successView:UIView = UIView()
-            successView.frame = CGRectMake(0, 0, parent.progressWidth, parent.progressHeight)
-            successView.center = self.view.center
-            successView.backgroundColor = parent.successBackgroundColor
-            successView.alpha = parent.progressAlpha
-            successView.layer.cornerRadius = parent.progressRadious
+            progressView.frame = CGRectMake(0, 0, parent.progressWidth, parent.progressHeight)
+            progressView.center = self.view.center
+            progressView.backgroundColor = parent.successBackgroundColor
+            progressView.alpha = parent.progressAlpha
+            progressView.layer.cornerRadius = parent.progressRadious
             
             let imageSize:CGSize = CGSizeMake(parent.progressWidth - kMargin*2, parent.progressHeight - kMargin*2)
             let imageView:UIImageView = UIImageView(frame: CGRectMake(0, 0, imageSize.width, imageSize.height))
             imageView.image = parent.successImage == nil ? parent.defaultSuccessImage : parent.successImage
-            imageView.center = self.view.center
+            imageView.frame.origin = CGPointMake(kMargin, kMargin)
             
             if(m != nil){
                 let messageLabel:UILabel = UILabel()
@@ -674,26 +757,25 @@ class PKNotificationClass: UIViewController {
                 messageLabel.textColor = parent.progressFontColor
                 messageLabel.textAlignment = NSTextAlignment.Center
                 messageLabel.text = m
-                imageView.center = CGPointMake(imageView.center.x, imageView.center.y - PKNotification.progressLabelHeight/4)
-                successView.addSubview(messageLabel)
+                imageView.frame.origin = CGPointMake(kMargin, kMargin - parent.progressLabelHeight/4)
+                progressView.addSubview(messageLabel)
             }
-            
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate(successView) : successView)
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate(imageView) : imageView)
+            progressView.addSubview(imageView)
+            self.view.userInteractionEnabled = false
+            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(progressView) : progressView)
         }
         
         func generateFailed(m:String?){
-            let failedView:UIView = UIView()
-            failedView.frame = CGRectMake(0, 0, parent.progressWidth, parent.progressHeight)
-            failedView.center = self.view.center
-            failedView.backgroundColor = parent.failedBackgroundColor
-            failedView.alpha = parent.progressAlpha
-            failedView.layer.cornerRadius = parent.progressRadious
+            progressView.frame = CGRectMake(0, 0, parent.progressWidth, parent.progressHeight)
+            progressView.center = self.view.center
+            progressView.backgroundColor = parent.failedBackgroundColor
+            progressView.alpha = parent.progressAlpha
+            progressView.layer.cornerRadius = parent.progressRadious
             
             let imageSize:CGSize = CGSizeMake(parent.progressWidth - kMargin*2, parent.progressHeight - kMargin*2)
             let imageView:UIImageView = UIImageView(frame: CGRectMake(0, 0, imageSize.width, imageSize.height))
             imageView.image = parent.failedImage == nil ? parent.defaultFailedImage : parent.failedImage
-            imageView.center = self.view.center
+            imageView.frame.origin = CGPointMake(kMargin, kMargin)
             
             if(m != nil){
                 let messageLabel:UILabel = UILabel()
@@ -702,19 +784,31 @@ class PKNotificationClass: UIViewController {
                 messageLabel.textColor = parent.progressFontColor
                 messageLabel.textAlignment = NSTextAlignment.Center
                 messageLabel.text = m
-                imageView.center = CGPointMake(imageView.center.x, imageView.center.y - parent.progressLabelHeight/4)
-                failedView.addSubview(messageLabel)
+                imageView.frame.origin = CGPointMake(kMargin, kMargin - parent.progressLabelHeight/4)
+                progressView.addSubview(messageLabel)
             }
-
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate(failedView) : failedView)
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate(imageView) : imageView)
+            progressView.addSubview(imageView)
+            self.view.userInteractionEnabled = false
+            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(progressView) : progressView)
         }
-        
+
+        func rotate() -> Void {
+            let point:CGPoint = UIApplication.sharedApplication().windows[0].center
+            if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+            {
+                progressView.center = point
+            }
+            
+            if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+            {
+                progressView.center = point
+            }
+        }
         
         /**
         * For iOS7
         */
-        func rotate(v:UIView) -> UIView {
+        func rotate4os7(v:UIView) -> UIView {
             switch(UIApplication.sharedApplication().statusBarOrientation){
             case .Portrait: break
             case .PortraitUpsideDown:
