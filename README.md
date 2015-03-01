@@ -5,9 +5,11 @@ Target: iOS7 or later
   
 Feel free to send me your feedback and PR.  
   
-### v0.0.3
-fix architecture to customize UI easier
-   
+### v0.1.0
+- fixed device rotate for ios8
+- able to add UITextField on Alert
+- fixed dismiss action of alert. 
+
 
 # UI
 <img src="https://raw.githubusercontent.com/hakopako/PKNotification/master/PKNotificationExample/PKNotification.gif">
@@ -32,24 +34,62 @@ PKNotification.alert(
 
 optional alert (title, message, dissmiss button and other buttons with actions)
 
-```
+```swift
+// create button 
+let foo:PKButton = PKButton(title: "Foo",
+                            action: { (messageLabel, items) -> Bool in
+                                        NSLog("Foo is clicked.")
+                                        return true
+                            },
+                            fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
+                            backgroundColor: nil)
+
+// call alert
 PKNotification.alert(
     title: "Notice",
     message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
-    items: [
-        PKNotification.generatePKButton(
-            title: "Foo",
-            action: { () -> Void in
-                NSLog("Foo is clicked.")
-            },
-            fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
-            backgroundColor: nil)
-    ],
+    items: [foo],
     cancelButtonTitle: "Cancel",
     tintColor: nil)
 ```
 
-custom
+with UITextField alert (ex. login form)
+
+```swift
+// init textfields
+let email:UITextField = UITextField()
+email.placeholder = "email@host.com"
+let passwd:UITextField = UITextField()
+passwd.placeholder = "password"
+
+// create login button
+let foo:PKButton = PKButton(title: "Login",
+    action: { (messageLabel, items) -> Bool in
+        let tmpEmail: UITextField = items[0] as UITextField //items index number
+        let tmpPassed: UITextField = items[1] as UITextField //items index number
+        
+        if (tmpEmail.text == "" || tmpPassed.text == ""){
+            messageLabel?.text = "sorry, please check email and pass again."
+            return false
+        }
+        return true
+    },
+    fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
+    backgroundColor: nil)
+
+// call alert
+PKNotification.alert(
+    title: "Login",
+    message: "Welcome to example.\nThis is a simple login form.",
+    items: [email, passwd, foo],
+    cancelButtonTitle: "Cancel",
+    tintColor: nil)
+
+```
+
+
+
+__custom__
 
 ```swift
 PKNotification.alertWidth   //CGFloat 
@@ -72,7 +112,7 @@ PKNotification.alertCornerRadius      //CGFloat
 PKNotification.toast("hogehogehogehoge")
 ```
 
-custom
+__custom__
 
 ```swift
 PKNotification.toastMargin   //CGFloat
@@ -97,7 +137,7 @@ PKNotification.failed("Foo")  // show default failed image with message.
 * success(), failed() have default images in `PKNotification/PKNotification.swift`
   
   
-custom
+__custom__
 
 ```swift
 PKNotification.loadingBackgroundColor       //UIColor
@@ -110,15 +150,20 @@ PKNotification.failedImage   //UIImage *if it's nil, set default image automatic
 ```
 
 # incoming improvements
-- fix rotate
+- add more default images
+- fix rotate for ios7
+- fix texifield actions
   
   
-# MIT License
+# License
 
 MIT
 
 
 # History
+### v0.0.3
+- fix architecture to customize UI easier
+
 ### v0.0.1
 - Toast message
 - Progress(Success, Failed, Loading)
