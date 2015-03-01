@@ -29,7 +29,7 @@
 
 import UIKit
 
-typealias PKButtonActionBlock = () -> Void
+typealias PKButtonActionBlock = (messageLabel:UILabel?, items:Array<AnyObject>) -> Bool
 let _PKNotificationSingleton:PKNotificationSingleton = PKNotificationSingleton()
 let PKNotification:PKNotificationClass = PKNotificationClass()
 
@@ -115,7 +115,7 @@ class PKNotificationClass: UIViewController {
     }
     
     // MARK: - Call methods
-    func alert(title t:String?, message m:String?, items i:Array<PKButton>?, cancelButtonTitle c:String?, tintColor tint:UIColor?) {
+    func alert(title t:String?, message m:String?, items i:Array<AnyObject>?, cancelButtonTitle c:String?, tintColor tint:UIColor?) {
         let alertVC:PKAlert = PKAlert(title:t, message:m, items:i, cancelButtonTitle:c, tintColor:tint, parent: self)
         alertVC.view.alpha = 0
         _PKNotificationSingleton.vcCollection.append(alertVC)
@@ -133,12 +133,6 @@ class PKNotificationClass: UIViewController {
             completion: { (finished:Bool) -> Void in
 
         })
-    }
-    
-    
-    func generatePKButton(title t:String!, action a:PKButtonActionBlock!, fontColor f:UIColor?, backgroundColor b:UIColor?) -> PKButton {
-        let button:PKButton = PKButton(title: t, action: a, fontColor: f, backgroundColor: b)
-        return button
     }
 
     func toast(message:String!) {
@@ -277,10 +271,9 @@ class PKNotificationClass: UIViewController {
             
         }
         
-        
     }
     
-    func removeVCCollectionByObject(target:UIViewController) -> Void {
+    private func removeVCCollectionByObject(target:UIViewController) -> Void {
         var cnt:Int = 0;
         for vc:UIViewController in _PKNotificationSingleton.vcCollection {
             if (vc == target){
@@ -294,9 +287,11 @@ class PKNotificationClass: UIViewController {
     class PKAlert: UIViewController {
         var parent:PKNotificationClass!
         let alertView:UIView = UIView(frame: CGRectMake(0, 0, 100, 100))
+        var items:Array<AnyObject> = []
+        var messageLabel:UILabel? = nil
         
         // MARK: - Lifecycle
-        init(title t:String?, message m:String?, items i:Array<PKButton>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
+        init(title t:String?, message m:String?, items i:Array<AnyObject>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
             /* initialize alert parts, resize them and set colors */
             super.init()
             parent = p
@@ -309,7 +304,7 @@ class PKNotificationClass: UIViewController {
             titleLabel?.textAlignment = NSTextAlignment.Center
             
             let messageLabelWidth:CGFloat = parent.alertWidth - PKNotification.alertMargin*2
-            let messageLabel:UILabel? = (m == nil) ? nil : UILabel(frame: CGRectMake(0, 0, messageLabelWidth, 40))
+            messageLabel = (m == nil) ? nil : UILabel(frame: CGRectMake(0, 0, messageLabelWidth, 44))
             if(messageLabel != nil){
                 messageLabel!.text = m
                 messageLabel!.textColor = parent.alertMessageFontColor
@@ -320,25 +315,40 @@ class PKNotificationClass: UIViewController {
                 messageLabel!.center = CGPointMake(messageLabelWidth/2, messageLabel!.frame.height/2)
             }
 
-            let items:Array<PKButton>? = (i == nil) ? nil : i!.map({(b:PKButton) -> PKButton in
-                b.frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
-                
-                //TODO: Precise color choise
-                let titleColor:UIColor? = (b.titleLabel?.textColor == UIColor.whiteColor()) ? nil : b.titleLabel?.textColor
-
-                b.setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
-                b.backgroundColor = (b.backgroundColor == nil) ? self.parent.alertBackgroundColor : b.backgroundColor
-                b.addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
-                return b
-            })
+            
+            if let tmpItems = i {
+                for b:AnyObject in tmpItems {
+                    if (b.isKindOfClass(UITextField)){
+                        let theLast:AnyObject? = items.last
+                        if (theLast != nil) {
+                            if(!theLast!.isKindOfClass(UITextField)){
+                                continue
+                            }
+                        }
+                        (b as UITextField).frame = CGRectMake(parent.alertMargin, 0, self.parent.alertWidth - 2 * parent.alertMargin, 44)
+                        (b as UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
+                        (b as UITextField).font = parent.alertMEssageFontStyle
+                        items.append((b as UITextField))
+                        
+                    } else if (b.isKindOfClass(PKButton)){
+                        (b as PKButton).frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
+                        //TODO: Precise color choise
+                        let titleColor:UIColor? = ((b as PKButton).titleLabel?.textColor == UIColor.whiteColor()) ? nil : (b as PKButton).titleLabel?.textColor
+                        (b as PKButton).setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
+                        (b as PKButton).backgroundColor = ((b as PKButton).backgroundColor == nil) ? self.parent.alertBackgroundColor : b.backgroundColor
+                        (b as PKButton).addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
+                        items.append((b as PKButton))
+                    }
+                }
+            }
 
             let cancelButtonTitle:String! = (c == nil) ? "Dissmiss" : c
-            let cancelButton:PKButton! = PKButton(title: cancelButtonTitle!, action: {() -> Void in}, fontColor: tintColor, backgroundColor: parent.alertBackgroundColor)
+            let cancelButton:PKButton! = PKButton(title: cancelButtonTitle!, action: {(items) -> Bool in return true}, fontColor: tintColor, backgroundColor: parent.alertBackgroundColor)
             cancelButton.frame = CGRectMake(0, 0, parent.alertWidth, 44)
             cancelButton.addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
             
             /* put parts on an alertview and add it as subview on self.view */
-            assembleDefaultStyle(titleLabel, messageLabel, items, cancelButton)
+            assembleDefaultStyle(titleLabel, cancelButton)
         }
        
         required init(coder aDecoder: NSCoder) {
@@ -352,6 +362,9 @@ class PKNotificationClass: UIViewController {
         
         override func viewDidLoad() {
             super.viewDidLoad()
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleSingleTap:")
+            tapRecognizer.numberOfTapsRequired = 1
+            self.view.addGestureRecognizer(tapRecognizer)
         }
         
         override func didReceiveMemoryWarning() {
@@ -363,17 +376,31 @@ class PKNotificationClass: UIViewController {
         }
         
         // MARK: - UI
-        func assembleDefaultStyle(titleLabel:UILabel?, _ messageLabel:UILabel?, _ items:Array<PKButton>?, _ cancelButton:PKButton!) -> Void {
+        func assembleDefaultStyle(titleLabel:UILabel?, _ cancelButton:PKButton!) -> Void {
             /* set layout and adjust button shape */
             let margin:CGFloat = parent.alertMargin
             let lineColor:UIColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
             let titlePosY:CGFloat = margin
             let messagePosY:CGFloat = (titleLabel == nil) ? titlePosY + margin*2 : titlePosY + titleLabel!.frame.height + margin
             var buttonPosY:CGFloat = (messageLabel == nil) ? messagePosY + margin*2 : messagePosY + messageLabel!.frame.height + margin*2
-            titleLabel?.frame.offset(dx:parent.alertMargin , dy: titlePosY)
-            messageLabel?.frame.offset(dx:parent.alertMargin , dy: messagePosY)
+            titleLabel?.frame.offset(dx:margin , dy: titlePosY)
+            messageLabel?.frame.offset(dx:margin , dy: messagePosY)
             
-            if(items?.count == 1) { //total button count is 2
+            var k=0
+            for ; k < items.count; k++ {
+                let o:AnyObject = items[k]
+                if !o.isKindOfClass(UITextField){
+                    break
+                }
+                let textField:UITextField = (o as UITextField)
+                textField.frame.offset(dx: 0, dy: buttonPosY)
+                buttonPosY += textField.frame.height + margin
+                alertView.addSubview(textField)
+            }
+            
+            let buttonCnt = items.count - k
+            buttonPosY += margin*2
+            if(buttonCnt == 1) { //total button count is 2
                 /* cancelbutton resize and adjust the shape */
                 cancelButton.frame.size = CGSizeMake(parent.alertWidth/2+1, cancelButton.frame.height)
                 let rectCancelButton:CGRect = cancelButton.bounds
@@ -388,7 +415,7 @@ class PKNotificationClass: UIViewController {
                 cancelButton.layer.borderColor = lineColor.CGColor
                 
                 /* the other button resize and adjust the shape */
-                let button = items![0]
+                let button = (items[k] as PKButton)
                 button.frame = CGRectMake(parent.alertWidth/2 , buttonPosY, parent.alertWidth/2, cancelButton.frame.height)
                 let rectButton:CGRect = button.bounds
                 let rectButtonMask:CGRect = CGRectMake(0, 0, rectButton.width-1, rectButton.height-1)
@@ -405,23 +432,27 @@ class PKNotificationClass: UIViewController {
                 
                 
             } else { //total button count is 1, 3 or more
-                if(items != nil){
-                    for button:PKButton in items! {
-                        button.frame.offset(dx: 0, dy: buttonPosY)
-                        let rectButton:CGRect = button.bounds
-                        let rectButtonMask:CGRect = CGRectMake(1, 0, rectButton.width-2, rectButton.height-1)
-                        
-                        let maskPath:UIBezierPath = UIBezierPath(rect:rectButtonMask)
-                        let maskLayer:CAShapeLayer = CAShapeLayer()
-                        maskLayer.frame = button.bounds
-                        maskLayer.path = maskPath.CGPath
-                        button.layer.mask = maskLayer
-                        button.layer.borderWidth = 1.0
-                        button.layer.borderColor = lineColor.CGColor
-                        
-                        buttonPosY += button.frame.height
-                        alertView.addSubview(button)
+                
+                for ; k < items.count; k++  {
+                    let o:AnyObject = items[k]
+                    if !o.isKindOfClass(PKButton){
+                        continue
                     }
+                    let button:PKButton = (o as PKButton)
+                    button.frame.offset(dx: 0, dy: buttonPosY)
+                    let rectButton:CGRect = button.bounds
+                    let rectButtonMask:CGRect = CGRectMake(1, 0, rectButton.width-2, rectButton.height-1)
+                    
+                    let maskPath:UIBezierPath = UIBezierPath(rect:rectButtonMask)
+                    let maskLayer:CAShapeLayer = CAShapeLayer()
+                    maskLayer.frame = button.bounds
+                    maskLayer.path = maskPath.CGPath
+                    button.layer.mask = maskLayer
+                    button.layer.borderWidth = 1.0
+                    button.layer.borderColor = lineColor.CGColor
+                    
+                    buttonPosY += button.frame.height
+                    alertView.addSubview(button)
                 }
                 
                 let rectCancelButton:CGRect = cancelButton.bounds
@@ -454,28 +485,35 @@ class PKNotificationClass: UIViewController {
             self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(alertView) : alertView )
             
         }
+        
+        func handleSingleTap(recognizer: UITapGestureRecognizer) {
+            
+            self.view.endEditing(true)
+            
+        }
 
         // MARK: - button action
         func buttonDown(sender: PKButton!) -> Void {
-            sender.actionBlock()
-            //Dissmiss alert
-            UIView.animateWithDuration(0.1,
-                delay: 0,
-                options: UIViewAnimationOptions.CurveLinear,
-                animations: { () -> Void in
-                    self.view.alpha = 0
-                },
-                completion: { (finished:Bool) -> Void in
-                    self.view.removeFromSuperview()
-                    var cnt:Int = 0;
-                    for vc:UIViewController in _PKNotificationSingleton.vcCollection {
-                        if (vc == self){
-                            _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
-                            break;
+            if (sender.actionBlock(messageLabel: messageLabel?, items: items)) {
+                //Dissmiss alert
+                UIView.animateWithDuration(0.1,
+                    delay: 0,
+                    options: UIViewAnimationOptions.CurveLinear,
+                    animations: { () -> Void in
+                        self.view.alpha = 0
+                    },
+                    completion: { (finished:Bool) -> Void in
+                        self.view.removeFromSuperview()
+                        var cnt:Int = 0;
+                        for vc:UIViewController in _PKNotificationSingleton.vcCollection {
+                            if (vc == self){
+                                _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
+                                break;
+                            }
+                            
                         }
-                        
-                    }
-            })
+                })
+            }
         }
         
         func rotate() -> Void {
@@ -511,29 +549,6 @@ class PKNotificationClass: UIViewController {
             }
             
             return v
-        }
-        
-    }
-    
-    // MARK: - @CLASS PKButton
-    class PKButton: UIButton {
-        var actionBlock:PKButtonActionBlock = {() -> Void in }
-        
-        init(title t:String, action a:PKButtonActionBlock, fontColor f:UIColor?, backgroundColor b:UIColor?) {
-            super.init()
-            actionBlock = a
-            self.setTitle(t, forState: UIControlState.Normal)
-            self.setTitleColor(f, forState: UIControlState.Normal)
-            self.backgroundColor = b
-            self.titleLabel?.textAlignment = NSTextAlignment.Center
-        }
-        
-        required init(coder aDecoder: NSCoder) {
-            super.init(coder: aDecoder)
-        }
-        
-        override init(frame aFrame: CGRect) {
-            super.init(frame: aFrame)
         }
         
     }
@@ -846,6 +861,29 @@ class PKNotificationClass: UIViewController {
             return image
         }
     }
+}
+
+// MARK: - @CLASS PKButton
+class PKButton: UIButton {
+    var actionBlock:PKButtonActionBlock = {(item) -> Bool in return true}
+    
+    init(title t:String, action a:PKButtonActionBlock, fontColor f:UIColor?, backgroundColor b:UIColor?) {
+        super.init()
+        actionBlock = a
+        self.setTitle(t, forState: UIControlState.Normal)
+        self.setTitleColor(f, forState: UIControlState.Normal)
+        self.backgroundColor = b
+        self.titleLabel?.textAlignment = NSTextAlignment.Center
+    }
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    override init(frame aFrame: CGRect) {
+        super.init(frame: aFrame)
+    }
+    
 }
 
 extension String {
