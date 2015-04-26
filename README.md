@@ -4,12 +4,10 @@ Simple and customizable notification functions(Toast, Progress, Loading and Aler
 Target: iOS7 or later
   
 Feel free to send me your feedback and PR.  
-  
-### v0.1.0
-- fixed device rotate for ios8
-- able to add UITextField on Alert
-- fixed dismiss action of alert. 
 
+### v0.1.1
+- fixed error with Xcode6.3
+  
 
 # UI
 <img src="https://raw.githubusercontent.com/hakopako/PKNotification/master/PKNotificationExample/PKNotification.gif">
@@ -161,6 +159,11 @@ MIT
 
 
 # History
+### v0.1.0
+- fixed device rotate for ios8
+- able to add UITextField on Alert
+- fixed dismiss action of alert.
+
 ### v0.0.3
 - fix architecture to customize UI easier
 

@@ -101,8 +101,8 @@ class ViewController: UIViewController {
         let foo:PKButton = PKButton(title: "Login",
             action: { (messageLabel, items) -> Bool in
                 NSLog("Login is clicked.")
-                let tmpEmail: UITextField = items[0] as UITextField //items index number
-                let tmpPassed: UITextField = items[1] as UITextField //items index number
+                let tmpEmail: UITextField = items[0] as! UITextField //items index number
+                let tmpPassed: UITextField = items[1] as! UITextField //items index number
                 NSLog("email = \(tmpEmail.text)")
                 NSLog("passwd = \(tmpPassed.text)")
                 
@@ -124,7 +124,7 @@ class ViewController: UIViewController {
             items: [email, passwd, foo],
             cancelButtonTitle: "Cancel",
             tintColor: nil)
-        
+
     }
     
 
