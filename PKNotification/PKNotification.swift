@@ -93,10 +93,6 @@ class PKNotificationClass: UIViewController {
     var alertCornerRadius:CGFloat = 8
     
     // MARK: - Lifecycle
-    required override init() {
-        super.init()
-    }
-
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -173,8 +169,8 @@ class PKNotificationClass: UIViewController {
             var cnt:Int = 0
             for anyObject in _PKNotificationSingleton.vcCollection {
                 if (anyObject.isKindOfClass(PKProgress)) {
-                    if (anyObject as PKProgress).type == PKProgressType.Loading {
-                        (anyObject as PKProgress).view.removeFromSuperview()
+                    if (anyObject as! PKProgress).type == PKProgressType.Loading {
+                        (anyObject as! PKProgress).view.removeFromSuperview()
                         _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
                         _PKNotificationSingleton.isLoading = false
                     }
@@ -258,15 +254,15 @@ class PKNotificationClass: UIViewController {
         var cnt:Int = 0
         for anyObject in _PKNotificationSingleton.vcCollection {
             if (anyObject.isKindOfClass(PKAlert)) {
-                (anyObject as PKAlert).rotate()
+                (anyObject as! PKAlert).rotate()
             }
             
             if (anyObject.isKindOfClass(PKToast)) {
-                (anyObject as PKToast).rotate()
+                (anyObject as! PKToast).rotate()
             }
 
             if (anyObject.isKindOfClass(PKProgress)) {
-                (anyObject as PKProgress).rotate()
+                (anyObject as! PKProgress).rotate()
             }
             
         }
@@ -291,9 +287,9 @@ class PKNotificationClass: UIViewController {
         var messageLabel:UILabel? = nil
         
         // MARK: - Lifecycle
-        init(title t:String?, message m:String?, items i:Array<AnyObject>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
+        convenience init(title t:String?, message m:String?, items i:Array<AnyObject>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
             /* initialize alert parts, resize them and set colors */
-            super.init()
+            self.init()
             parent = p
             let tintColor:UIColor! = (tint == nil) ? parent.alertButtonFontColor : tint
             
@@ -325,19 +321,19 @@ class PKNotificationClass: UIViewController {
                                 continue
                             }
                         }
-                        (b as UITextField).frame = CGRectMake(parent.alertMargin, 0, self.parent.alertWidth - 2 * parent.alertMargin, 44)
-                        (b as UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
-                        (b as UITextField).font = parent.alertMEssageFontStyle
-                        items.append((b as UITextField))
+                        (b as! UITextField).frame = CGRectMake(parent.alertMargin, 0, self.parent.alertWidth - 2 * parent.alertMargin, 44)
+                        (b as! UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
+                        (b as! UITextField).font = parent.alertMEssageFontStyle
+                        items.append((b as! UITextField))
                         
                     } else if (b.isKindOfClass(PKButton)){
-                        (b as PKButton).frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
+                        (b as! PKButton).frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
                         //TODO: Precise color choise
-                        let titleColor:UIColor? = ((b as PKButton).titleLabel?.textColor == UIColor.whiteColor()) ? nil : (b as PKButton).titleLabel?.textColor
-                        (b as PKButton).setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
-                        (b as PKButton).backgroundColor = ((b as PKButton).backgroundColor == nil) ? self.parent.alertBackgroundColor : b.backgroundColor
-                        (b as PKButton).addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
-                        items.append((b as PKButton))
+                        let titleColor:UIColor? = ((b as! PKButton).titleLabel?.textColor == UIColor.whiteColor()) ? nil : (b as! PKButton).titleLabel?.textColor
+                        (b as! PKButton).setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
+                        (b as! PKButton).backgroundColor = ((b as! PKButton).backgroundColor == nil) ? self.parent.alertBackgroundColor : b.backgroundColor
+                        (b as! PKButton).addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
+                        items.append((b as! PKButton))
                     }
                 }
             }
@@ -392,7 +388,7 @@ class PKNotificationClass: UIViewController {
                 if !o.isKindOfClass(UITextField){
                     break
                 }
-                let textField:UITextField = (o as UITextField)
+                let textField:UITextField = (o as! UITextField)
                 textField.frame.offset(dx: 0, dy: buttonPosY)
                 buttonPosY += textField.frame.height + margin
                 alertView.addSubview(textField)
@@ -415,7 +411,7 @@ class PKNotificationClass: UIViewController {
                 cancelButton.layer.borderColor = lineColor.CGColor
                 
                 /* the other button resize and adjust the shape */
-                let button = (items[k] as PKButton)
+                let button = (items[k] as! PKButton)
                 button.frame = CGRectMake(parent.alertWidth/2 , buttonPosY, parent.alertWidth/2, cancelButton.frame.height)
                 let rectButton:CGRect = button.bounds
                 let rectButtonMask:CGRect = CGRectMake(0, 0, rectButton.width-1, rectButton.height-1)
@@ -438,7 +434,7 @@ class PKNotificationClass: UIViewController {
                     if !o.isKindOfClass(PKButton){
                         continue
                     }
-                    let button:PKButton = (o as PKButton)
+                    let button:PKButton = (o as! PKButton)
                     button.frame.offset(dx: 0, dy: buttonPosY)
                     let rectButton:CGRect = button.bounds
                     let rectButtonMask:CGRect = CGRectMake(1, 0, rectButton.width-2, rectButton.height-1)
@@ -494,7 +490,7 @@ class PKNotificationClass: UIViewController {
 
         // MARK: - button action
         func buttonDown(sender: PKButton!) -> Void {
-            if (sender.actionBlock(messageLabel: messageLabel?, items: items)) {
+            if (sender.actionBlock(messageLabel: messageLabel, items: items)) {
                 //Dissmiss alert
                 UIView.animateWithDuration(0.1,
                     delay: 0,
@@ -567,16 +563,12 @@ class PKNotificationClass: UIViewController {
         var height:CGFloat = 0
         
         // MARK: - Lifecycle
-        init(message m:String, parent p:PKNotificationClass) {
-            super.init()
+        convenience init(message m:String, parent p:PKNotificationClass) {
+            self.init()
             parent = p
             generate(message: m)
         }
-        
-        required override init() {
-            super.init()
-        }
-        
+
         required init(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
         }
@@ -687,30 +679,24 @@ class PKNotificationClass: UIViewController {
         let kMargin:CGFloat = 30
         let rectBounds:CGRect = UIScreen.mainScreen().bounds
         let progressView:UIView = UIView()
-        let type:PKProgressType = .Loading
+        var type:PKProgressType = .Loading
         
         // MARK: - Lifecycle
-        init(_ t:PKProgressType, _ m:String?, _ p:PKNotificationClass) {
-            super.init()
+        convenience init(_ t:PKProgressType, _ m:String?, _ p:PKNotificationClass) {
+            self.init()
             parent = p
+            type = t
             switch(t){
                 case .Loading:
-                    type = t
                     generateLoading()
                     break
                 case .Success:
-                    type = t
                     generateSuccess(m)
                     break
                 case .Failed:
-                    type = t
                     generateFailed(m)
                     break
             }
-        }
-        
-        required override init() {
-            super.init()
         }
         
         required init(coder aDecoder: NSCoder) {
@@ -867,8 +853,8 @@ class PKNotificationClass: UIViewController {
 class PKButton: UIButton {
     var actionBlock:PKButtonActionBlock = {(item) -> Bool in return true}
     
-    init(title t:String, action a:PKButtonActionBlock, fontColor f:UIColor?, backgroundColor b:UIColor?) {
-        super.init()
+    convenience init(title t:String, action a:PKButtonActionBlock, fontColor f:UIColor?, backgroundColor b:UIColor?) {
+        self.init()
         actionBlock = a
         self.setTitle(t, forState: UIControlState.Normal)
         self.setTitleColor(f, forState: UIControlState.Normal)
