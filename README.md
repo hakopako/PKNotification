@@ -5,8 +5,9 @@ Target: iOS7 or later
   
 Feel free to send me your feedback and PR.  
 
-### v0.1.1
-- fixed error with Xcode6.3
+### v0.2.0
+- fixed alert with textfield   
+- will be  added default images (not yet..  
   
 
 # UI
@@ -159,6 +160,9 @@ MIT
 
 
 # History
+### v0.1.1
+- fixed error with Xcode6.3
+
 ### v0.1.0
 - fixed device rotate for ios8
 - able to add UITextField on Alert

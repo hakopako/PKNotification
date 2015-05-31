@@ -71,7 +71,7 @@ class ViewController: UIViewController {
         let bar:PKButton = PKButton(title: "Not Dismiss",
                                     action: { (messageLabel, items) -> Bool in
                                             NSLog("Not Dismiss is clicked.")
-                                            messageLabel?.text = "not dismiss button is clicked."
+                                            messageLabel?.text = "not dismiss button is clicked.\nresize message label automatically."
                                             return false
                                     },
                                     fontColor: nil,
@@ -107,7 +107,7 @@ class ViewController: UIViewController {
                 NSLog("passwd = \(tmpPassed.text)")
                 
                 if (tmpEmail.text == "" || tmpPassed.text == ""){
-                    messageLabel?.text = "sorry, please check email and pass again."
+                    messageLabel?.text = "please check email and password again."
                     tmpEmail.backgroundColor = UIColor(red: 0.95, green: 0.8, blue: 0.8, alpha: 1.0)
                     tmpPassed.backgroundColor = UIColor(red: 0.95, green: 0.8, blue: 0.8, alpha: 1.0)
                     return false

@@ -283,8 +283,10 @@ class PKNotificationClass: UIViewController {
     class PKAlert: UIViewController {
         var parent:PKNotificationClass!
         let alertView:UIView = UIView(frame: CGRectMake(0, 0, 100, 100))
+        var titleLabel:UILabel? = nil
         var items:Array<AnyObject> = []
         var messageLabel:UILabel? = nil
+        var cancelButton:PKButton! = PKButton()
         
         // MARK: - Lifecycle
         convenience init(title t:String?, message m:String?, items i:Array<AnyObject>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
@@ -293,23 +295,11 @@ class PKNotificationClass: UIViewController {
             parent = p
             let tintColor:UIColor! = (tint == nil) ? parent.alertButtonFontColor : tint
             
-            let titleLabel:UILabel? = (t == nil) ? nil : UILabel(frame: CGRectMake(0, 0, parent.alertWidth - parent.alertMargin*2, 40))
+            titleLabel = (t == nil) ? nil : UILabel()
             titleLabel?.text = t
-            titleLabel?.textColor = parent.alertTitleFontColor
-            titleLabel?.font = parent.alertTitleFontStyle
-            titleLabel?.textAlignment = NSTextAlignment.Center
             
-            let messageLabelWidth:CGFloat = parent.alertWidth - PKNotification.alertMargin*2
-            messageLabel = (m == nil) ? nil : UILabel(frame: CGRectMake(0, 0, messageLabelWidth, 44))
-            if(messageLabel != nil){
-                messageLabel!.text = m
-                messageLabel!.textColor = parent.alertMessageFontColor
-                messageLabel!.font = parent.alertMEssageFontStyle
-                messageLabel!.textAlignment = NSTextAlignment.Center
-                messageLabel!.numberOfLines = 0
-                messageLabel!.sizeToFit()
-                messageLabel!.center = CGPointMake(messageLabelWidth/2, messageLabel!.frame.height/2)
-            }
+            messageLabel = (m == nil) ? nil : UILabel()
+            messageLabel?.text = m
 
             
             if let tmpItems = i {
@@ -321,13 +311,9 @@ class PKNotificationClass: UIViewController {
                                 continue
                             }
                         }
-                        (b as! UITextField).frame = CGRectMake(parent.alertMargin, 0, self.parent.alertWidth - 2 * parent.alertMargin, 44)
-                        (b as! UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
-                        (b as! UITextField).font = parent.alertMEssageFontStyle
                         items.append((b as! UITextField))
                         
                     } else if (b.isKindOfClass(PKButton)){
-                        (b as! PKButton).frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
                         //TODO: Precise color choise
                         let titleColor:UIColor? = ((b as! PKButton).titleLabel?.textColor == UIColor.whiteColor()) ? nil : (b as! PKButton).titleLabel?.textColor
                         (b as! PKButton).setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
@@ -339,12 +325,19 @@ class PKNotificationClass: UIViewController {
             }
 
             let cancelButtonTitle:String! = (c == nil) ? "Dissmiss" : c
-            let cancelButton:PKButton! = PKButton(title: cancelButtonTitle!, action: {(items) -> Bool in return true}, fontColor: tintColor, backgroundColor: parent.alertBackgroundColor)
-            cancelButton.frame = CGRectMake(0, 0, parent.alertWidth, 44)
+            cancelButton = PKButton(title: cancelButtonTitle!, action: {(items) -> Bool in return true}, fontColor: tintColor, backgroundColor: parent.alertBackgroundColor)
             cancelButton.addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
             
             /* put parts on an alertview and add it as subview on self.view */
-            assembleDefaultStyle(titleLabel, cancelButton)
+            resizeParts()
+            assembleDefaultStyle()
+            let alertBackgroundView = parent.generateBackground(color: UIColor.blackColor(), uiEnabled: true)
+            alertBackgroundView.alpha = 0.3
+            if(titleLabel != nil){ alertView.addSubview(titleLabel!)}
+            if(messageLabel != nil){ alertView.addSubview(messageLabel!)}
+            alertView.addSubview(cancelButton)
+            self.view.addSubview(alertBackgroundView)
+            self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(alertView) : alertView )
         }
        
         required init(coder aDecoder: NSCoder) {
@@ -372,7 +365,37 @@ class PKNotificationClass: UIViewController {
         }
         
         // MARK: - UI
-        func assembleDefaultStyle(titleLabel:UILabel?, _ cancelButton:PKButton!) -> Void {
+        func resizeParts() -> Void {
+            let messageLabelWidth:CGFloat = parent.alertWidth - PKNotification.alertMargin*2
+            titleLabel?.frame = CGRectMake(0, 0, messageLabelWidth, 40)
+            titleLabel?.textColor = parent.alertTitleFontColor
+            titleLabel?.font = parent.alertTitleFontStyle
+            titleLabel?.textAlignment = NSTextAlignment.Center
+
+            messageLabel?.textColor = parent.alertMessageFontColor
+            messageLabel?.font = parent.alertMEssageFontStyle
+            messageLabel?.textAlignment = NSTextAlignment.Center
+            messageLabel?.numberOfLines = 0
+            messageLabel?.frame = CGRectMake(0, 0, messageLabelWidth, 44)
+            messageLabel?.sizeToFit()
+            messageLabel?.center = CGPointMake(messageLabelWidth/2, messageLabel!.frame.height/2)
+            
+            for b:AnyObject in items {
+                if (b.isKindOfClass(UITextField)){
+                    (b as! UITextField).frame = CGRectMake(parent.alertMargin, 0, self.parent.alertWidth - 2 * parent.alertMargin, 44)
+                    (b as! UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
+                    (b as! UITextField).font = parent.alertMEssageFontStyle
+                    
+                } else if (b.isKindOfClass(PKButton)){
+                    (b as! PKButton).frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
+                }
+            }
+            
+            cancelButton.frame = CGRectMake(0, 0, parent.alertWidth, 44)
+            
+        }
+        
+        func assembleDefaultStyle() -> Void {
             /* set layout and adjust button shape */
             let margin:CGFloat = parent.alertMargin
             let lineColor:UIColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
@@ -466,20 +489,11 @@ class PKNotificationClass: UIViewController {
             
             cancelButton.frame.offset(dx: 0, dy: buttonPosY)
             
-            let alertBackgroundView = parent.generateBackground(color: UIColor.blackColor(), uiEnabled: true)
-            alertBackgroundView.alpha = 0.3
-            
             let kAlertHeight:CGFloat = cancelButton.frame.origin.y + cancelButton.frame.height
             alertView.frame.size = CGSizeMake(parent.alertWidth, kAlertHeight)
             alertView.backgroundColor = parent.alertBackgroundColor
             alertView.layer.cornerRadius = parent.alertCornerRadius
-            if(titleLabel != nil){ alertView.addSubview(titleLabel!)}
-            if(messageLabel != nil){ alertView.addSubview(messageLabel!)}
-            alertView.addSubview(cancelButton)
-            self.view.addSubview(alertBackgroundView)
             alertView.center = UIApplication.sharedApplication().windows[0].center
-            self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(alertView) : alertView )
-            
         }
         
         func handleSingleTap(recognizer: UITapGestureRecognizer) {
@@ -510,6 +524,8 @@ class PKNotificationClass: UIViewController {
                         }
                 })
             }
+            resizeParts()
+            assembleDefaultStyle()
         }
         
         func rotate() -> Void {
