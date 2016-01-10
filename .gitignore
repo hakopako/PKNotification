@@ -1,7 +1,8 @@
 # .gitignore
-*.xcodeproj/*
+#*.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/project.xcworkspace/*
+!*.xcodeproj/xcshareddata/*
 !*.xcodeproj/default.*
 *.xcworkspace/*
 !*.xcworkspace/contents.xcworkspacedata
