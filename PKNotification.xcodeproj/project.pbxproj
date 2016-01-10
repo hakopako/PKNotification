@@ -7,19 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D292DADF1A4AA7E5006268E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D292DADE1A4AA7E5006268E9 /* AppDelegate.swift */; };
-		D292DAE11A4AA7E5006268E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D292DAE01A4AA7E5006268E9 /* ViewController.swift */; };
-		D292DAE41A4AA7E5006268E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D292DAE21A4AA7E5006268E9 /* Main.storyboard */; };
-		D292DAE61A4AA7E5006268E9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D292DAE51A4AA7E5006268E9 /* Images.xcassets */; };
-		D292DAE91A4AA7E5006268E9 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D292DAE71A4AA7E5006268E9 /* LaunchScreen.xib */; };
-		D292DAF51A4AA7E5006268E9 /* PKNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D292DAF41A4AA7E5006268E9 /* PKNotificationTests.swift */; };
 		D292DB001A4AA9FB006268E9 /* PKNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = D292DAFF1A4AA9FB006268E9 /* PKNotification.swift */; };
-		D2FE3FF01A4C41B500C915A0 /* Toast.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FEF1A4C41B500C915A0 /* Toast.png */; };
-		D2FE3FF21A4C41C900C915A0 /* Loading.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FF11A4C41C900C915A0 /* Loading.png */; };
-		D2FE3FF61A4C41E000C915A0 /* Failed.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FF51A4C41E000C915A0 /* Failed.png */; };
-		D2FE3FF81A4C41F500C915A0 /* Success.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FF71A4C41F500C915A0 /* Success.png */; };
-		D2FE40001A512B8D00C915A0 /* PKNotification.gif in Resources */ = {isa = PBXBuildFile; fileRef = D2FE3FFF1A512B8D00C915A0 /* PKNotification.gif */; };
-		D2FE40021A512BC400C915A0 /* images.png in Resources */ = {isa = PBXBuildFile; fileRef = D2FE40011A512BC400C915A0 /* images.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,23 +21,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D20AE7DA1C41F8B700237004 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		D292DAD91A4AA7E5006268E9 /* PKNotification.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PKNotification.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D292DADD1A4AA7E5006268E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D292DADE1A4AA7E5006268E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D292DAE01A4AA7E5006268E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		D292DAE31A4AA7E5006268E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		D292DAE51A4AA7E5006268E9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		D292DAE81A4AA7E5006268E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		D292DAEE1A4AA7E5006268E9 /* PKNotificationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PKNotificationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D292DAF31A4AA7E5006268E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D292DAF41A4AA7E5006268E9 /* PKNotificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKNotificationTests.swift; sourceTree = "<group>"; };
 		D292DAFF1A4AA9FB006268E9 /* PKNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PKNotification.swift; sourceTree = "<group>"; };
-		D2FE3FEF1A4C41B500C915A0 /* Toast.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Toast.png; sourceTree = "<group>"; };
-		D2FE3FF11A4C41C900C915A0 /* Loading.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Loading.png; sourceTree = "<group>"; };
-		D2FE3FF51A4C41E000C915A0 /* Failed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Failed.png; sourceTree = "<group>"; };
-		D2FE3FF71A4C41F500C915A0 /* Success.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Success.png; sourceTree = "<group>"; };
-		D2FE3FFF1A512B8D00C915A0 /* PKNotification.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = PKNotification.gif; sourceTree = "<group>"; };
-		D2FE40011A512BC400C915A0 /* images.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = images.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,11 +49,10 @@
 			isa = PBXGroup;
 			children = (
 				D292DAFE1A4AA978006268E9 /* PKNotification */,
-				D292DADB1A4AA7E5006268E9 /* PKNotificationExample */,
-				D292DAF11A4AA7E5006268E9 /* PKNotificationTests */,
 				D292DADA1A4AA7E5006268E9 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		D292DADA1A4AA7E5006268E9 /* Products */ = {
 			isa = PBXGroup;
@@ -89,53 +63,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D292DADB1A4AA7E5006268E9 /* PKNotificationExample */ = {
-			isa = PBXGroup;
-			children = (
-				D292DADE1A4AA7E5006268E9 /* AppDelegate.swift */,
-				D292DAE01A4AA7E5006268E9 /* ViewController.swift */,
-				D292DAE21A4AA7E5006268E9 /* Main.storyboard */,
-				D292DAE51A4AA7E5006268E9 /* Images.xcassets */,
-				D292DAE71A4AA7E5006268E9 /* LaunchScreen.xib */,
-				D292DADC1A4AA7E5006268E9 /* Supporting Files */,
-			);
-			path = PKNotificationExample;
-			sourceTree = "<group>";
-		};
-		D292DADC1A4AA7E5006268E9 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				D2FE40011A512BC400C915A0 /* images.png */,
-				D2FE3FFF1A512B8D00C915A0 /* PKNotification.gif */,
-				D2FE3FF71A4C41F500C915A0 /* Success.png */,
-				D2FE3FF51A4C41E000C915A0 /* Failed.png */,
-				D2FE3FF11A4C41C900C915A0 /* Loading.png */,
-				D2FE3FEF1A4C41B500C915A0 /* Toast.png */,
-				D292DADD1A4AA7E5006268E9 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		D292DAF11A4AA7E5006268E9 /* PKNotificationTests */ = {
-			isa = PBXGroup;
-			children = (
-				D292DAF41A4AA7E5006268E9 /* PKNotificationTests.swift */,
-				D292DAF21A4AA7E5006268E9 /* Supporting Files */,
-			);
-			path = PKNotificationTests;
-			sourceTree = "<group>";
-		};
-		D292DAF21A4AA7E5006268E9 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				D292DAF31A4AA7E5006268E9 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		D292DAFE1A4AA978006268E9 /* PKNotification */ = {
 			isa = PBXGroup;
 			children = (
+				D20AE7DA1C41F8B700237004 /* Info.plist */,
 				D292DAFF1A4AA9FB006268E9 /* PKNotification.swift */,
 			);
 			path = PKNotification;
@@ -187,7 +118,7 @@
 			attributes = {
 				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = hakopako;
 				TargetAttributes = {
 					D292DAD81A4AA7E5006268E9 = {
@@ -223,15 +154,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D2FE40021A512BC400C915A0 /* images.png in Resources */,
-				D2FE3FF21A4C41C900C915A0 /* Loading.png in Resources */,
-				D292DAE41A4AA7E5006268E9 /* Main.storyboard in Resources */,
-				D292DAE91A4AA7E5006268E9 /* LaunchScreen.xib in Resources */,
-				D2FE40001A512B8D00C915A0 /* PKNotification.gif in Resources */,
-				D292DAE61A4AA7E5006268E9 /* Images.xcassets in Resources */,
-				D2FE3FF01A4C41B500C915A0 /* Toast.png in Resources */,
-				D2FE3FF81A4C41F500C915A0 /* Success.png in Resources */,
-				D2FE3FF61A4C41E000C915A0 /* Failed.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,8 +171,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D292DAE11A4AA7E5006268E9 /* ViewController.swift in Sources */,
-				D292DADF1A4AA7E5006268E9 /* AppDelegate.swift in Sources */,
 				D292DB001A4AA9FB006268E9 /* PKNotification.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -259,7 +179,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D292DAF51A4AA7E5006268E9 /* PKNotificationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,25 +191,6 @@
 			targetProxy = D292DAEF1A4AA7E5006268E9 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		D292DAE21A4AA7E5006268E9 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D292DAE31A4AA7E5006268E9 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		D292DAE71A4AA7E5006268E9 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D292DAE81A4AA7E5006268E9 /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		D292DAF61A4AA7E5006268E9 /* Debug */ = {
@@ -313,6 +213,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -375,10 +276,10 @@
 		D292DAF91A4AA7E5006268E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "$(SRCROOT)/PKNotificationExample/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "hakopako.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -387,10 +288,10 @@
 		D292DAFA1A4AA7E5006268E9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = "$(SRCROOT)/PKNotificationExample/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "hakopako.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

@@ -690,11 +690,29 @@ class PKNotificationClass: UIViewController {
         
         // MARK: - button action
         func buttonDown(sender: PKButton!) -> Void {
-            //Dissmiss alert
-            UIView.animateWithDuration(0.1,
+            //Dissmiss actionSheet
+            let w:CGFloat = rectBounds.size.width
+            let h:CGFloat = rectBounds.size.height
+            var actual_h:CGFloat = 0
+            if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+            {
+                actual_h = (w < h) ? w : h
+            }
+            
+            if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+            {
+                actual_h = (h < w) ? w : h
+            }
+
+            UIView.animateWithDuration(0.2,
                 delay: 0,
                 options: UIViewAnimationOptions.CurveLinear,
                 animations: { () -> Void in
+                    self.actionSheetView.frame = CGRectMake(
+                        self.actionSheetView.frame.origin.x,
+                        actual_h,
+                        self.actionSheetView.frame.width,
+                        self.actionSheetView.frame.height)
                     self.view.alpha = 0
                 },
                 completion: { (finished:Bool) -> Void in
