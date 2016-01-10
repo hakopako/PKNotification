@@ -1,9 +1,9 @@
 //
 //  AppDelegate.swift
-//  PKNotification
+//  Demo
 //
-//  Created by hakopako on 2014/12/24.
-//  Copyright (c) 2014年 hakopako. All rights reserved.
+//  Created by shimada on 2016/01/10.
+//  Copyright © 2016年 hakopako. All rights reserved.
 //
 
 import UIKit

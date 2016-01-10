@@ -87,13 +87,21 @@ class PKNotificationClass: UIViewController {
     var alertTitleFontColor:UIColor = UIColor.darkGrayColor()
     var alertTitleFontStyle:UIFont = UIFont.boldSystemFontOfSize(17)
     var alertMessageFontColor:UIColor = UIColor.grayColor()
-    var alertMEssageFontStyle:UIFont = UIFont.systemFontOfSize(13)
+    var alertMessageFontStyle:UIFont = UIFont.systemFontOfSize(13)
     var alertButtonFontColor:UIColor = UIColor.grayColor()
     var alertBackgroundColor:UIColor = UIColor.whiteColor()
     var alertCornerRadius:CGFloat = 8
     
+    //PKActionSheet custom
+    var actionSheetMargin:CGFloat = 8
+    var actionSheetTitleFontColor:UIColor = UIColor.darkGrayColor()
+    var actionSheetTitleFontStyle:UIFont = UIFont.boldSystemFontOfSize(17)
+    var actionSheetButtonFontColor:UIColor = UIColor.grayColor()
+    var actionSheetBackgroundColor:UIColor = UIColor.whiteColor()
+    var actionSheetCornerRadius:CGFloat = 8
+    
     // MARK: - Lifecycle
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
@@ -131,6 +139,45 @@ class PKNotificationClass: UIViewController {
         })
     }
 
+    func actionSheet(title t:String?, items i:Array<PKButton>?, cancelButtonTitle c:String?, tintColor tint:UIColor?) {
+        let actionSheetVC:PKActionSheet = PKActionSheet(title:t, items:i, cancelButtonTitle:c, tintColor:tint, parent: self)
+        _PKNotificationSingleton.vcCollection.append(actionSheetVC)
+        actionSheetVC.view.center = UIApplication.sharedApplication().windows[0].center
+        UIApplication.sharedApplication().windows[0].addSubview(actionSheetVC.view)
+        
+        let w:CGFloat = actionSheetVC.rectBounds.size.width
+        let h:CGFloat = actionSheetVC.rectBounds.size.height
+        var actual_h:CGFloat = 0
+        if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+        {
+            actual_h = (w < h) ? w : h
+        }
+        
+        if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+        {
+            actual_h = (h < w) ? w : h
+        }
+        
+        actionSheetVC.actionSheetView.frame = CGRectMake(
+            actionSheetVC.actionSheetView.frame.origin.x,
+            actual_h,
+            actionSheetVC.actionSheetView.frame.width,
+            actionSheetVC.actionSheetView.frame.height)
+        
+        UIView.animateWithDuration(0.2,
+            delay: 0,
+            options: UIViewAnimationOptions.CurveLinear,
+            animations: { () -> Void in
+                actionSheetVC.actionSheetView.frame = CGRectMake(
+                    self.actionSheetMargin,
+                    actual_h - actionSheetVC.actionSheetView.frame.height,
+                    actionSheetVC.actionSheetView.frame.width,
+                    actionSheetVC.actionSheetView.frame.height)
+            },
+            completion: { (finished:Bool) -> Void in
+        })
+    }
+    
     func toast(message:String!) {
         let toastVC:PKToast = PKToast(message: message, parent: self)
         _PKNotificationSingleton.vcCollection.append(toastVC)
@@ -166,7 +213,7 @@ class PKNotificationClass: UIViewController {
             UIApplication.sharedApplication().windows[0].addSubview(progressVC.view)
             _PKNotificationSingleton.isLoading = true
         } else if(!flag && _PKNotificationSingleton.isLoading) {
-            var cnt:Int = 0
+            let cnt:Int = 0
             for anyObject in _PKNotificationSingleton.vcCollection {
                 if (anyObject.isKindOfClass(PKProgress)) {
                     if (anyObject as! PKProgress).type == PKProgressType.Loading {
@@ -238,11 +285,10 @@ class PKNotificationClass: UIViewController {
     }
     
     // MARK: - Common methods
-    private func generateBackground(#color:UIColor, uiEnabled:Bool) -> UIView {
-        var backgroundView = UIView()
+    private func generateBackground(color color:UIColor, uiEnabled:Bool) -> UIView {
+        let backgroundView = UIView()
         let mainScreenFrame:CGRect = UIScreen.mainScreen().bounds
         let length:CGFloat = (mainScreenFrame.width < mainScreenFrame.height) ? mainScreenFrame.height : mainScreenFrame.width
-        let diff:CGFloat = abs(mainScreenFrame.height - mainScreenFrame.width)
         backgroundView.frame = CGRectMake(0, 0, length, length)
         backgroundView.backgroundColor = color
         backgroundView.userInteractionEnabled = uiEnabled
@@ -251,26 +297,28 @@ class PKNotificationClass: UIViewController {
 
     func rotated()
     {
-        var cnt:Int = 0
         for anyObject in _PKNotificationSingleton.vcCollection {
             if (anyObject.isKindOfClass(PKAlert)) {
                 (anyObject as! PKAlert).rotate()
             }
             
+            if (anyObject.isKindOfClass(PKActionSheet)) {
+                (anyObject as! PKActionSheet).rotate()
+            }
+            
             if (anyObject.isKindOfClass(PKToast)) {
                 (anyObject as! PKToast).rotate()
             }
-
+            
             if (anyObject.isKindOfClass(PKProgress)) {
                 (anyObject as! PKProgress).rotate()
             }
-            
         }
         
     }
     
     private func removeVCCollectionByObject(target:UIViewController) -> Void {
-        var cnt:Int = 0;
+        let cnt:Int = 0;
         for vc:UIViewController in _PKNotificationSingleton.vcCollection {
             if (vc == target){
                 _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
@@ -283,8 +331,10 @@ class PKNotificationClass: UIViewController {
     class PKAlert: UIViewController {
         var parent:PKNotificationClass!
         let alertView:UIView = UIView(frame: CGRectMake(0, 0, 100, 100))
+        var titleLabel:UILabel? = nil
         var items:Array<AnyObject> = []
         var messageLabel:UILabel? = nil
+        var cancelButton:PKButton! = PKButton()
         
         // MARK: - Lifecycle
         convenience init(title t:String?, message m:String?, items i:Array<AnyObject>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
@@ -293,61 +343,57 @@ class PKNotificationClass: UIViewController {
             parent = p
             let tintColor:UIColor! = (tint == nil) ? parent.alertButtonFontColor : tint
             
-            let titleLabel:UILabel? = (t == nil) ? nil : UILabel(frame: CGRectMake(0, 0, parent.alertWidth - parent.alertMargin*2, 40))
+            titleLabel = (t == nil) ? nil : UILabel()
             titleLabel?.text = t
-            titleLabel?.textColor = parent.alertTitleFontColor
-            titleLabel?.font = parent.alertTitleFontStyle
-            titleLabel?.textAlignment = NSTextAlignment.Center
             
-            let messageLabelWidth:CGFloat = parent.alertWidth - PKNotification.alertMargin*2
-            messageLabel = (m == nil) ? nil : UILabel(frame: CGRectMake(0, 0, messageLabelWidth, 44))
-            if(messageLabel != nil){
-                messageLabel!.text = m
-                messageLabel!.textColor = parent.alertMessageFontColor
-                messageLabel!.font = parent.alertMEssageFontStyle
-                messageLabel!.textAlignment = NSTextAlignment.Center
-                messageLabel!.numberOfLines = 0
-                messageLabel!.sizeToFit()
-                messageLabel!.center = CGPointMake(messageLabelWidth/2, messageLabel!.frame.height/2)
-            }
+            messageLabel = (m == nil) ? nil : UILabel()
+            messageLabel?.text = m
 
             
             if let tmpItems = i {
                 for b:AnyObject in tmpItems {
-                    if (b.isKindOfClass(UITextField)){
-                        let theLast:AnyObject? = items.last
-                        if (theLast != nil) {
-                            if(!theLast!.isKindOfClass(UITextField)){
-                                continue
-                            }
-                        }
-                        (b as! UITextField).frame = CGRectMake(parent.alertMargin, 0, self.parent.alertWidth - 2 * parent.alertMargin, 44)
-                        (b as! UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
-                        (b as! UITextField).font = parent.alertMEssageFontStyle
-                        items.append((b as! UITextField))
-                        
-                    } else if (b.isKindOfClass(PKButton)){
-                        (b as! PKButton).frame = CGRectMake(0, 0, self.parent.alertWidth, 44)
+                    if (b is PKButton){
                         //TODO: Precise color choise
                         let titleColor:UIColor? = ((b as! PKButton).titleLabel?.textColor == UIColor.whiteColor()) ? nil : (b as! PKButton).titleLabel?.textColor
                         (b as! PKButton).setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
                         (b as! PKButton).backgroundColor = ((b as! PKButton).backgroundColor == nil) ? self.parent.alertBackgroundColor : b.backgroundColor
                         (b as! PKButton).addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
                         items.append((b as! PKButton))
+                    } else if (b.isKindOfClass(UITextField) || b is UIButton){
+                        let theLast:AnyObject? = items.last
+                        if (theLast != nil) {
+                            if(!theLast!.isKindOfClass(UITextField) && !(theLast! is UIButton)){
+                                continue
+                            }
+                        }
+                        if(b.isKindOfClass(UITextField)){
+                            items.append(b as! UITextField)
+                        } else if (b is UIButton){
+                            items.append(b as! UIButton)
+                        }
                     }
                 }
             }
 
             let cancelButtonTitle:String! = (c == nil) ? "Dissmiss" : c
-            let cancelButton:PKButton! = PKButton(title: cancelButtonTitle!, action: {(items) -> Bool in return true}, fontColor: tintColor, backgroundColor: parent.alertBackgroundColor)
-            cancelButton.frame = CGRectMake(0, 0, parent.alertWidth, 44)
+            cancelButton = PKButton(title: cancelButtonTitle!, action: {(items) -> Bool in return true}, fontColor: tintColor, backgroundColor: parent.alertBackgroundColor)
             cancelButton.addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
             
             /* put parts on an alertview and add it as subview on self.view */
-            assembleDefaultStyle(titleLabel, cancelButton)
+            resizeParts()
+            let alertBackgroundView = parent.generateBackground(color: UIColor.blackColor(), uiEnabled: true)
+            alertBackgroundView.alpha = 0.3
+            if(titleLabel != nil){ alertView.addSubview(titleLabel!)}
+            if(messageLabel != nil){ alertView.addSubview(messageLabel!)}
+            for b:AnyObject in items {
+                alertView.addSubview((b as! UIView))
+            }
+            alertView.addSubview(cancelButton)
+            self.view.addSubview(alertBackgroundView)
+            self.view.addSubview(alertView)
         }
        
-        required init(coder aDecoder: NSCoder) {
+        required init?(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
         }
         
@@ -372,144 +418,74 @@ class PKNotificationClass: UIViewController {
         }
         
         // MARK: - UI
-        func assembleDefaultStyle(titleLabel:UILabel?, _ cancelButton:PKButton!) -> Void {
+        func resizeParts() -> Void {
             /* set layout and adjust button shape */
             let margin:CGFloat = parent.alertMargin
+            let messageLabelWidth:CGFloat = parent.alertWidth - margin*2
             let lineColor:UIColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
             let titlePosY:CGFloat = margin
+            titleLabel?.frame = CGRectMake(margin, titlePosY, messageLabelWidth, 40)
+            titleLabel?.textColor = parent.alertTitleFontColor
+            titleLabel?.font = parent.alertTitleFontStyle
+            titleLabel?.textAlignment = NSTextAlignment.Center
+            
             let messagePosY:CGFloat = (titleLabel == nil) ? titlePosY + margin*2 : titlePosY + titleLabel!.frame.height + margin
+            messageLabel?.textColor = parent.alertMessageFontColor
+            messageLabel?.font = parent.alertMessageFontStyle
+            messageLabel?.textAlignment = NSTextAlignment.Center
+            messageLabel?.numberOfLines = 0
+            messageLabel?.frame = CGRectMake(margin, messagePosY, messageLabelWidth, 44)
+            messageLabel?.sizeToFit()
+            messageLabel?.frame = CGRectMake((parent.alertWidth - messageLabel!.frame.width)/2, messagePosY, messageLabel!.frame.width, messageLabel!.frame.height)
+            
             var buttonPosY:CGFloat = (messageLabel == nil) ? messagePosY + margin*2 : messagePosY + messageLabel!.frame.height + margin*2
-            titleLabel?.frame.offset(dx:margin , dy: titlePosY)
-            messageLabel?.frame.offset(dx:margin , dy: messagePosY)
             
-            var k=0
-            for ; k < items.count; k++ {
-                let o:AnyObject = items[k]
-                if !o.isKindOfClass(UITextField){
-                    break
-                }
-                let textField:UITextField = (o as! UITextField)
-                textField.frame.offset(dx: 0, dy: buttonPosY)
-                buttonPosY += textField.frame.height + margin
-                alertView.addSubview(textField)
-            }
-            
-            let buttonCnt = items.count - k
-            buttonPosY += margin*2
-            if(buttonCnt == 1) { //total button count is 2
-                /* cancelbutton resize and adjust the shape */
-                cancelButton.frame.size = CGSizeMake(parent.alertWidth/2+1, cancelButton.frame.height)
-                let rectCancelButton:CGRect = cancelButton.bounds
-                let rectCancelButtonMask:CGRect = CGRectMake(1, 0, rectCancelButton.width-2, rectCancelButton.height-1)
-                
-                let cancelMaskPath:UIBezierPath = UIBezierPath(roundedRect: rectCancelButtonMask, byRoundingCorners: UIRectCorner.BottomLeft, cornerRadii: CGSizeMake(parent.alertCornerRadius, parent.alertCornerRadius))
-                let cancelMaskLayer:CAShapeLayer = CAShapeLayer()
-                cancelMaskLayer.frame = cancelButton.bounds
-                cancelMaskLayer.path = cancelMaskPath.CGPath
-                cancelButton.layer.mask = cancelMaskLayer
-                cancelButton.layer.borderWidth = 1.0
-                cancelButton.layer.borderColor = lineColor.CGColor
-                
-                /* the other button resize and adjust the shape */
-                let button = (items[k] as! PKButton)
-                button.frame = CGRectMake(parent.alertWidth/2 , buttonPosY, parent.alertWidth/2, cancelButton.frame.height)
-                let rectButton:CGRect = button.bounds
-                let rectButtonMask:CGRect = CGRectMake(0, 0, rectButton.width-1, rectButton.height-1)
-                
-                let maskPath:UIBezierPath = UIBezierPath(roundedRect: rectButtonMask, byRoundingCorners: UIRectCorner.BottomRight, cornerRadii: CGSizeMake(parent.alertCornerRadius, parent.alertCornerRadius))
-                let maskLayer:CAShapeLayer = CAShapeLayer()
-                maskLayer.frame = button.bounds
-                maskLayer.path = maskPath.CGPath
-                button.layer.mask = maskLayer
-                button.layer.borderWidth = 1.0
-                button.layer.borderColor = lineColor.CGColor
-                
-                alertView.addSubview(button)
-                
-                
-            } else { //total button count is 1, 3 or more
-                
-                for ; k < items.count; k++  {
-                    let o:AnyObject = items[k]
-                    if !o.isKindOfClass(PKButton){
-                        continue
-                    }
-                    let button:PKButton = (o as! PKButton)
-                    button.frame.offset(dx: 0, dy: buttonPosY)
-                    let rectButton:CGRect = button.bounds
+            for b:AnyObject in items {
+                if (b.isKindOfClass(UITextField)){
+                    (b as! UITextField).frame = CGRectMake(parent.alertMargin, buttonPosY, self.parent.alertWidth - 2 * parent.alertMargin, 44)
+                    (b as! UITextField).layer.sublayerTransform = CATransform3DMakeTranslation(5, 0, 0);
+                    (b as! UITextField).font = parent.alertMessageFontStyle
+                    buttonPosY += b.frame.height + margin
+                } else if (b.isKindOfClass(PKButton)){
+                    (b as! PKButton).frame = CGRectMake(0, buttonPosY, self.parent.alertWidth, 44)
+                    let rectButton:CGRect = b.bounds
                     let rectButtonMask:CGRect = CGRectMake(1, 0, rectButton.width-2, rectButton.height-1)
-                    
                     let maskPath:UIBezierPath = UIBezierPath(rect:rectButtonMask)
                     let maskLayer:CAShapeLayer = CAShapeLayer()
-                    maskLayer.frame = button.bounds
+                    maskLayer.frame = b.bounds
                     maskLayer.path = maskPath.CGPath
-                    button.layer.mask = maskLayer
-                    button.layer.borderWidth = 1.0
-                    button.layer.borderColor = lineColor.CGColor
-                    
-                    buttonPosY += button.frame.height
-                    alertView.addSubview(button)
+                    b.layer.mask = maskLayer
+                    b.layer.borderWidth = 1.0
+                    b.layer.borderColor = lineColor.CGColor
+                    buttonPosY += b.frame.height
+                } else if (b is UIButton){
+                    (b as! UIButton).frame = CGRectMake(0, buttonPosY, self.parent.alertWidth - 2 * parent.alertMargin, 44)
+                    buttonPosY += b.frame.height + margin
                 }
-                
-                let rectCancelButton:CGRect = cancelButton.bounds
-                let rectCancelButtonMask:CGRect = CGRectMake(1, 0, rectCancelButton.width-2, rectCancelButton.height-1)
-                
-                let maskPath:UIBezierPath = UIBezierPath(roundedRect: rectCancelButtonMask, byRoundingCorners: UIRectCorner.BottomLeft | UIRectCorner.BottomRight, cornerRadii: CGSizeMake(parent.alertCornerRadius, parent.alertCornerRadius))
-                let maskLayer:CAShapeLayer = CAShapeLayer()
-                maskLayer.frame = cancelButton.bounds
-                maskLayer.path = maskPath.CGPath
-                cancelButton.layer.mask = maskLayer
-                
-                cancelButton.layer.borderWidth = 1.0
-                cancelButton.layer.borderColor = lineColor.CGColor
             }
             
-            cancelButton.frame.offset(dx: 0, dy: buttonPosY)
+            cancelButton.frame = CGRectMake(0, buttonPosY, parent.alertWidth, 44)
+            let rectCancelButton:CGRect = cancelButton.bounds
+            let rectCancelButtonMask:CGRect = CGRectMake(1, 0, rectCancelButton.width-2, rectCancelButton.height-1)
             
-            let alertBackgroundView = parent.generateBackground(color: UIColor.blackColor(), uiEnabled: true)
-            alertBackgroundView.alpha = 0.3
+            let maskPath:UIBezierPath = UIBezierPath(roundedRect: rectCancelButtonMask, byRoundingCorners: [UIRectCorner.BottomLeft, UIRectCorner.BottomRight], cornerRadii: CGSizeMake(parent.alertCornerRadius, parent.alertCornerRadius))
+            let maskLayer:CAShapeLayer = CAShapeLayer()
+            maskLayer.frame = cancelButton.bounds
+            maskLayer.path = maskPath.CGPath
+            cancelButton.layer.mask = maskLayer
+            cancelButton.layer.borderWidth = 1.0
+            cancelButton.layer.borderColor = lineColor.CGColor
             
             let kAlertHeight:CGFloat = cancelButton.frame.origin.y + cancelButton.frame.height
             alertView.frame.size = CGSizeMake(parent.alertWidth, kAlertHeight)
             alertView.backgroundColor = parent.alertBackgroundColor
             alertView.layer.cornerRadius = parent.alertCornerRadius
-            if(titleLabel != nil){ alertView.addSubview(titleLabel!)}
-            if(messageLabel != nil){ alertView.addSubview(messageLabel!)}
-            alertView.addSubview(cancelButton)
-            self.view.addSubview(alertBackgroundView)
             alertView.center = UIApplication.sharedApplication().windows[0].center
-            self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(alertView) : alertView )
             
         }
         
         func handleSingleTap(recognizer: UITapGestureRecognizer) {
-            
             self.view.endEditing(true)
-            
-        }
-
-        // MARK: - button action
-        func buttonDown(sender: PKButton!) -> Void {
-            if (sender.actionBlock(messageLabel: messageLabel, items: items)) {
-                //Dissmiss alert
-                UIView.animateWithDuration(0.1,
-                    delay: 0,
-                    options: UIViewAnimationOptions.CurveLinear,
-                    animations: { () -> Void in
-                        self.view.alpha = 0
-                    },
-                    completion: { (finished:Bool) -> Void in
-                        self.view.removeFromSuperview()
-                        var cnt:Int = 0;
-                        for vc:UIViewController in _PKNotificationSingleton.vcCollection {
-                            if (vc == self){
-                                _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
-                                break;
-                            }
-                            
-                        }
-                })
-            }
         }
         
         func rotate() -> Void {
@@ -524,30 +500,237 @@ class PKNotificationClass: UIViewController {
                 alertView.center = point
             }
         }
+
+        // MARK: - button action
+        func buttonDown(sender: PKButton!) -> Void {
+            if (sender.actionBlock(messageLabel: messageLabel, items: items)) {
+                //Dissmiss alert
+                UIView.animateWithDuration(0.1,
+                    delay: 0,
+                    options: UIViewAnimationOptions.CurveLinear,
+                    animations: { () -> Void in
+                        self.view.alpha = 0
+                    },
+                    completion: { (finished:Bool) -> Void in
+                        self.view.removeFromSuperview()
+                        let cnt:Int = 0;
+                        for vc:UIViewController in _PKNotificationSingleton.vcCollection {
+                            if (vc == self){
+                                _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
+                                break;
+                            }
+                            
+                        }
+                })
+            }
+            resizeParts()
+        }
+    }
+    
+    
+    // MARK: - @CLASS PKActionSheet
+    class PKActionSheet: UIViewController {
+        var parent:PKNotificationClass!
+        let rectBounds:CGRect = UIScreen.mainScreen().bounds
+        let actionSheetView:UIView = UIView(frame: CGRectMake(0, 0, 100, 100))
+        var titleLabel:UILabel? = nil
+        var items:Array<PKButton> = []
+        var cancelButton:PKButton! = PKButton()
         
-        
-        /**
-        * For iOS7
-        */
-        func rotate4os7(v:UIView) -> UIView {
-            switch(UIApplication.sharedApplication().statusBarOrientation){
-            case .Portrait: break
-            case .PortraitUpsideDown:
-                v.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI), 0.0, 0.0, 1.0)
-                break
-            case .LandscapeLeft:
-                v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * (-1) * CGFloat(M_PI), 0.0, 0.0, 1.0)
-                break
-            case .LandscapeRight:
-                v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * CGFloat(M_PI), 0.0, 0.0, 1.0)
-                break
-            case .Unknown: break
+        // MARK: - Lifecycle
+        convenience init(title t:String?, items i:Array<PKButton>?, cancelButtonTitle c:String?, tintColor tint:UIColor?, parent p:PKNotificationClass) {
+            /* initialize alert parts, resize them and set colors */
+            self.init()
+            parent = p
+            let tintColor:UIColor! = (tint == nil) ? parent.actionSheetButtonFontColor : tint
+            
+            titleLabel = (t == nil) ? nil : UILabel()
+            titleLabel?.text = t
+            
+            if let tmpItems = i {
+                for b:PKButton in tmpItems {
+                    //TODO: Precise color choise
+                    let titleColor:UIColor? = (b.titleLabel?.textColor == UIColor.whiteColor()) ? nil : b.titleLabel?.textColor
+                    b.setTitleColor((titleColor == nil) ? tintColor : titleColor, forState: UIControlState.Normal)
+                    b.backgroundColor = (b.backgroundColor == nil) ? self.parent.actionSheetBackgroundColor : b.backgroundColor
+                    b.addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
+                    items.append(b)
+                }
             }
             
-            return v
+            let cancelButtonTitle:String! = (c == nil) ? "Dissmiss" : c
+            cancelButton = PKButton(title: cancelButtonTitle!, action: {(items) -> Bool in return true}, fontColor: tintColor, backgroundColor: parent.actionSheetBackgroundColor)
+            cancelButton.addTarget(self, action:"buttonDown:", forControlEvents: UIControlEvents.TouchUpInside)
+            
+            /* put parts on an alertview and add it as subview on self.view */
+            resizeParts()
+            let actionSheetBackgroundView = parent.generateBackground(color: UIColor.blackColor(), uiEnabled: true)
+            actionSheetBackgroundView.alpha = 0.3
+            if(titleLabel != nil){ actionSheetView.addSubview(titleLabel!)}
+            for b:AnyObject in items {
+                actionSheetView.addSubview((b as! UIView))
+            }
+            actionSheetView.addSubview(cancelButton)
+            self.view.addSubview(actionSheetBackgroundView)
+            self.view.addSubview(actionSheetView)
         }
         
+        required init?(coder aDecoder: NSCoder) {
+            super.init(coder: aDecoder)
+        }
+        
+        required override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+            super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+            //NSLog("########### \(NSStringFromClass(self.dynamicType)): \(self) is initialized. ###########")
+        }
+        
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleSingleTap:")
+            tapRecognizer.numberOfTapsRequired = 1
+            self.view.addGestureRecognizer(tapRecognizer)
+        }
+        
+        override func didReceiveMemoryWarning() {
+            super.didReceiveMemoryWarning()
+        }
+        
+        deinit {
+            //NSLog("########### \(NSStringFromClass(self.dynamicType)): \(self) is deinitialized. ###########")
+        }
+        
+        // MARK: - UI
+        func resizeParts() -> Void {
+            /* set layout and adjust button shape */
+            let margin:CGFloat = parent.actionSheetMargin
+            let lineColor:UIColor = UIColor(red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
+            let titlePosY:CGFloat = margin
+            let w:CGFloat = UIScreen.mainScreen().bounds.width
+            //let w:CGFloat = (UIScreen.mainScreen().bounds.width < UIScreen.mainScreen().bounds.height) ? UIScreen.mainScreen().bounds.width : UIScreen.mainScreen().bounds.height
+            let actionSheetWidth:CGFloat = w - margin*2
+            titleLabel?.frame = CGRectMake(0, titlePosY, actionSheetWidth, 40)
+            titleLabel?.textColor = parent.actionSheetTitleFontColor
+            titleLabel?.font = parent.actionSheetTitleFontStyle
+            titleLabel?.textAlignment = NSTextAlignment.Center
+            
+            var buttonPosY:CGFloat = (titleLabel == nil) ? 0:  titlePosY + titleLabel!.frame.height + margin
+            
+            for b:PKButton in items {
+                b.frame = CGRectMake(0, buttonPosY, actionSheetWidth, 44)
+                let rectButton:CGRect = b.bounds
+                
+                if(b.isEqual(items.first) && titleLabel == nil){
+                    let rectButtonMaskr:CGRect = CGRectMake(1, 1, rectButton.width-2, rectButton.height-2)
+                    let maskPathr:UIBezierPath = UIBezierPath(roundedRect: rectButtonMaskr, byRoundingCorners: [UIRectCorner.TopLeft, UIRectCorner.TopRight], cornerRadii: CGSizeMake(parent.actionSheetCornerRadius, parent.actionSheetCornerRadius))
+                    let maskLayerr:CAShapeLayer = CAShapeLayer()
+                    maskLayerr.frame = b.bounds
+                    maskLayerr.path = maskPathr.CGPath
+                    b.layer.mask = maskLayerr
+                    b.layer.borderWidth = 1.0
+                    b.layer.borderColor = lineColor.CGColor
+
+                } else {
+                    let rectButtonMask:CGRect = CGRectMake(1, 0, rectButton.width-2, rectButton.height-1)
+                    let maskPath:UIBezierPath = UIBezierPath(rect:rectButtonMask)
+                    let maskLayer:CAShapeLayer = CAShapeLayer()
+                    maskLayer.frame = b.bounds
+                    maskLayer.path = maskPath.CGPath
+                    b.layer.mask = maskLayer
+                    b.layer.borderWidth = 1.0
+                    b.layer.borderColor = lineColor.CGColor
+                }
+                buttonPosY += b.frame.height
+            }
+            
+            cancelButton.frame = CGRectMake(0, buttonPosY, actionSheetWidth, 44)
+            let rectCancelButton:CGRect = cancelButton.bounds
+            let rectCancelButtonMask:CGRect = CGRectMake(1, 0, rectCancelButton.width-2, rectCancelButton.height-1)
+            
+            let maskPath:UIBezierPath = UIBezierPath(roundedRect: rectCancelButtonMask, byRoundingCorners: [UIRectCorner.BottomLeft, UIRectCorner.BottomRight], cornerRadii: CGSizeMake(parent.actionSheetCornerRadius, parent.actionSheetCornerRadius))
+            let maskLayer:CAShapeLayer = CAShapeLayer()
+            maskLayer.frame = cancelButton.bounds
+            maskLayer.path = maskPath.CGPath
+            cancelButton.layer.mask = maskLayer
+            cancelButton.layer.borderWidth = 1.0
+            cancelButton.layer.borderColor = lineColor.CGColor
+            
+            let kActionSheetHeight:CGFloat = cancelButton.frame.origin.y + cancelButton.frame.height
+            actionSheetView.frame.size = CGSizeMake(actionSheetWidth, kActionSheetHeight)
+            actionSheetView.backgroundColor = parent.actionSheetBackgroundColor
+            actionSheetView.layer.cornerRadius = parent.actionSheetCornerRadius
+            //actionSheetView.center = UIApplication.sharedApplication().windows[0].center
+            
+        }
+        
+        func handleSingleTap(recognizer: UITapGestureRecognizer) {
+            self.view.endEditing(true)
+        }
+        
+        func rotate() -> Void {
+            let w:CGFloat = rectBounds.size.width
+            let h:CGFloat = rectBounds.size.height
+            var actual_h:CGFloat = 0
+            if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+            {
+                actual_h = (w < h) ? w : h
+            }
+            
+            if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+            {
+                actual_h = (h < w) ? w : h
+            }
+            resizeParts()
+            actionSheetView.frame = CGRectMake(
+                parent.actionSheetMargin,
+                actual_h - actionSheetView.frame.height,
+                actionSheetView.frame.width,
+                actionSheetView.frame.height)
+            
+        }
+        
+        // MARK: - button action
+        func buttonDown(sender: PKButton!) -> Void {
+            if (sender.actionBlock(messageLabel: nil, items: items)) {
+                //Dissmiss actionSheet
+                let w:CGFloat = rectBounds.size.width
+                let h:CGFloat = rectBounds.size.height
+                var actual_h:CGFloat = 0
+                if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
+                {
+                    actual_h = (w < h) ? w : h
+                }
+                
+                if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
+                {
+                    actual_h = (h < w) ? w : h
+                }
+
+                UIView.animateWithDuration(0.2,
+                    delay: 0,
+                    options: UIViewAnimationOptions.CurveLinear,
+                    animations: { () -> Void in
+                        self.actionSheetView.frame = CGRectMake(
+                            self.actionSheetView.frame.origin.x,
+                            actual_h,
+                            self.actionSheetView.frame.width,
+                            self.actionSheetView.frame.height)
+                        self.view.alpha = 0
+                    },
+                    completion: { (finished:Bool) -> Void in
+                        self.view.removeFromSuperview()
+                        let cnt:Int = 0;
+                        for vc:UIViewController in _PKNotificationSingleton.vcCollection {
+                            if (vc == self){
+                                _PKNotificationSingleton.vcCollection.removeAtIndex(cnt)
+                                break;
+                            }
+                            
+                        }
+                })
+            }
+        }
     }
+    
 
     // MARK: - @CLASS PKToast
     class PKToast: UIViewController {
@@ -569,7 +752,7 @@ class PKNotificationClass: UIViewController {
             generate(message: m)
         }
 
-        required init(coder aDecoder: NSCoder) {
+        required init?(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
         }
         
@@ -609,66 +792,25 @@ class PKNotificationClass: UIViewController {
             messageLabel.text = m
             toastView.addSubview(messageLabel)
             self.view.userInteractionEnabled = false
-            self.view.addSubview( (parent.onVersion < 8.0) ? rotate4os7(toastView) : toastView )
-            
-            if(parent.onVersion < 8.0){
-                if(UIApplication.sharedApplication().statusBarOrientation == .LandscapeLeft
-                    || UIApplication.sharedApplication().statusBarOrientation == .LandscapeRight){
-                    messageLabel.frame.size.width = height
-                } else {
-                    messageLabel.frame.size.width = width
-                }
-            }
-            
+            self.view.addSubview(toastView)
         }
         
         func rotate() -> Void {
-            let point:CGPoint = UIApplication.sharedApplication().windows[0].center
+            let w:CGFloat = rectBounds.size.width
+            let h:CGFloat = rectBounds.size.height
             if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
             {
-                //progressView.center = point
+                posY = (h < w) ? h - parent.toastMargin - parent.toastHeight : w - parent.toastMargin - parent.toastHeight
+                width = (h < w) ? w - parent.toastMargin * 2 : h - parent.toastMargin * 2
             }
             
             if(UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation))
             {
-                //progressView.center = point
+                posY = (w < h) ? h - parent.toastMargin - parent.toastHeight : w - parent.toastMargin - parent.toastHeight
+                width = (w < h) ? w - parent.toastMargin * 2 : h - parent.toastMargin * 2
             }
-        }
-        
-        /**
-         * For iOS7
-         */
-        func rotate4os7(v:UIView) -> UIView {
-            switch(UIApplication.sharedApplication().statusBarOrientation){
-                case .Portrait: break
-                case .PortraitUpsideDown:
-                    v.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI), 0.0, 0.0, 1.0)
-                    posX = parent.toastMargin
-                    posY = parent.toastMargin + parent.toastHeight
-                    width = rectBounds.size.width - parent.toastMargin * 2
-                    height = parent.toastHeight
-                    v.frame = CGRectMake(posX, posY, width, height)
-                    break
-                case .LandscapeLeft:
-                    v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * (-1) * CGFloat(M_PI), 0.0, 0.0, 1.0)
-                    posX = rectBounds.size.width - parent.toastMargin - parent.toastHeight
-                    posY = parent.toastMargin
-                    width = parent.toastHeight
-                    height = rectBounds.size.height - parent.toastMargin * 2
-                    v.frame = CGRectMake(posX, posY, width, height)
-                    break
-                case .LandscapeRight:
-                    v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * CGFloat(M_PI), 0.0, 0.0, 1.0)
-                    posX = parent.toastMargin
-                    posY = parent.toastMargin
-                    width = parent.toastHeight
-                    height = rectBounds.size.height - parent.toastMargin * 2
-                    v.frame = CGRectMake(posX, posY, width, height)
-                    break
-                case .Unknown: break
-            }
-            
-            return v
+            toastView.frame = CGRectMake(posX, posY, width, height)
+            messageLabel.frame = CGRectMake(0, 0, toastView.frame.width, toastView.frame.height)
         }
     }
 
@@ -699,7 +841,7 @@ class PKNotificationClass: UIViewController {
             }
         }
         
-        required init(coder aDecoder: NSCoder) {
+        required init?(coder aDecoder: NSCoder) {
             super.init(coder: aDecoder)
         }
         
@@ -729,13 +871,16 @@ class PKNotificationClass: UIViewController {
             progressView.layer.cornerRadius = parent.progressRadious
             
             let ai:UIActivityIndicatorView = UIActivityIndicatorView() as UIActivityIndicatorView
-            ai.center = progressView.center
+            ai.frame = CGRectMake(
+                (progressView.frame.width - ai.frame.width)/2,
+                (progressView.frame.height - ai.frame.height)/2,
+                ai.frame.width,
+                ai.frame.height)
             ai.activityIndicatorViewStyle = parent.loadingActiveIndicatorStyle
             ai.hidesWhenStopped = true
             ai.startAnimating()
-
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(progressView) : progressView)
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(ai) : ai)
+            progressView.addSubview(ai)
+            self.view.addSubview(progressView)
             self.view.userInteractionEnabled = false
         }
         
@@ -763,7 +908,7 @@ class PKNotificationClass: UIViewController {
             }
             progressView.addSubview(imageView)
             self.view.userInteractionEnabled = false
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(progressView) : progressView)
+            self.view.addSubview(progressView)
         }
         
         func generateFailed(m:String?){
@@ -790,9 +935,9 @@ class PKNotificationClass: UIViewController {
             }
             progressView.addSubview(imageView)
             self.view.userInteractionEnabled = false
-            self.view.addSubview((parent.onVersion < 8.0) ? rotate4os7(progressView) : progressView)
+            self.view.addSubview(progressView)
         }
-
+        
         func rotate() -> Void {
             let point:CGPoint = UIApplication.sharedApplication().windows[0].center
             if(UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation))
@@ -805,28 +950,6 @@ class PKNotificationClass: UIViewController {
                 progressView.center = point
             }
         }
-        
-        /**
-        * For iOS7
-        */
-        func rotate4os7(v:UIView) -> UIView {
-            switch(UIApplication.sharedApplication().statusBarOrientation){
-            case .Portrait: break
-            case .PortraitUpsideDown:
-                v.layer.transform = CATransform3DMakeRotation(CGFloat(M_PI), 0.0, 0.0, 1.0)
-                break
-            case .LandscapeLeft:
-                v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * (-1) * CGFloat(M_PI), 0.0, 0.0, 1.0)
-                break
-            case .LandscapeRight:
-                v.layer.transform = CATransform3DMakeRotation(90.0 / 180.0 * CGFloat(M_PI), 0.0, 0.0, 1.0)
-                break
-            case .Unknown: break
-            }
-            
-            return v
-        }
-
     }
     
     // MARK: - @CLASS Images
@@ -862,7 +985,7 @@ class PKButton: UIButton {
         self.titleLabel?.textAlignment = NSTextAlignment.Center
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     

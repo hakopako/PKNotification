@@ -12,9 +12,9 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var alertButton: UIButton!
-    @IBOutlet weak var alertButton2Options: UIButton!
-    @IBOutlet weak var alertButton3OrMore: UIButton!
+    @IBOutlet weak var alertButtonOptions: UIButton!
     @IBOutlet weak var alertWithTextField: UIButton!
+    @IBOutlet weak var actionsheetButton: UIButton!
     @IBOutlet weak var toastButton: UIButton!
     @IBOutlet weak var loadingButton: UIButton!
     @IBOutlet weak var successButton: UIButton!
@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        PKNotification.alertCornerRadius = 1
+        PKNotification.alertCornerRadius = 3
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -42,47 +42,29 @@ class ViewController: UIViewController {
         
     }
     
-    @IBAction func alertButton2OptionsDown(sender: AnyObject) {
+    @IBAction func alertButtonOptionsDown(sender: AnyObject) {
         let foo:PKButton = PKButton(title: "Foo",
-                                    action: { (messageLabel, items) -> Bool in
-                                                NSLog("Foo is clicked.")
-                                                return true
-                                    },
-                                    fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
-                                    backgroundColor: nil)
+            action: { (messageLabel, items) -> Bool in
+                NSLog("Foo is clicked.")
+                return true
+            },
+            fontColor: UIColor.purpleColor(),
+            backgroundColor: nil)
         
+        let bar:PKButton = PKButton(title: "Not Dismiss",
+            action: { (messageLabel, items) -> Bool in
+                NSLog("Not Dismiss is clicked.")
+                messageLabel?.text = "not dismiss button is clicked."
+                return false
+            },
+            fontColor: nil,
+            backgroundColor: nil)
         PKNotification.alert(
             title: "Notice",
             message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
-            items: [foo],
+            items: [foo, bar],
             cancelButtonTitle: "Cancel",
             tintColor: nil)
-    }
-    
-    @IBAction func alertButton3OrMoreDown(sender: AnyObject) {
-        let foo:PKButton = PKButton(title: "Foo",
-                                    action: { (messageLabel, items) -> Bool in
-                                            NSLog("Foo is clicked.")
-                                            return true
-                                    },
-                                    fontColor: UIColor.purpleColor(),
-                                    backgroundColor: nil)
-        
-        let bar:PKButton = PKButton(title: "Not Dismiss",
-                                    action: { (messageLabel, items) -> Bool in
-                                            NSLog("Not Dismiss is clicked.")
-                                            messageLabel?.text = "not dismiss button is clicked."
-                                            return false
-                                    },
-                                    fontColor: nil,
-                                    backgroundColor: nil)
-        
-        PKNotification.alert(
-            title: "Done",
-            message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
-            items: [foo, bar],
-            cancelButtonTitle: nil,
-            tintColor: UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1.0))
     }
     
     @IBAction func alertWithTextFieldDown(sender: AnyObject) {
@@ -107,7 +89,7 @@ class ViewController: UIViewController {
                 NSLog("passwd = \(tmpPassed.text)")
                 
                 if (tmpEmail.text == "" || tmpPassed.text == ""){
-                    messageLabel?.text = "sorry, please check email and pass again."
+                    messageLabel?.text = "please check email and password again."
                     tmpEmail.backgroundColor = UIColor(red: 0.95, green: 0.8, blue: 0.8, alpha: 1.0)
                     tmpPassed.backgroundColor = UIColor(red: 0.95, green: 0.8, blue: 0.8, alpha: 1.0)
                     return false
@@ -126,7 +108,29 @@ class ViewController: UIViewController {
             tintColor: nil)
 
     }
-    
+
+    @IBAction func actionsheetButtonDown(sender: AnyObject) {
+        PKNotification.actionSheetCornerRadius = 3
+        let foo:PKButton = PKButton(title: "Foo",
+            action: { (m, i) -> Bool in
+                NSLog("Foo is clicked.")
+                return true
+            },
+            fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
+            backgroundColor: nil)
+        let bar:PKButton = PKButton(title: "Bar",
+            action: { (m, i) -> Bool in
+                NSLog("Bar is clicked.")
+                return true
+            },
+            fontColor: UIColor.purpleColor(),
+            backgroundColor: nil)
+        PKNotification.actionSheet(
+            title: "Title",
+            items: [foo, bar],
+            cancelButtonTitle: "Cancel",
+            tintColor: nil)
+    }
 
     @IBAction func toastButtonDown(sender: AnyObject) {
         PKNotification.toastBackgroundColor = UIColor.purpleColor()
