@@ -112,14 +112,14 @@ class ViewController: UIViewController {
     @IBAction func actionsheetButtonDown(sender: AnyObject) {
         PKNotification.actionSheetCornerRadius = 3
         let foo:PKButton = PKButton(title: "Foo",
-            action: { (messageLabel, items) -> Bool in
+            action: { (m, i) -> Bool in
                 NSLog("Foo is clicked.")
                 return true
             },
             fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
             backgroundColor: nil)
         let bar:PKButton = PKButton(title: "Bar",
-            action: { (messageLabel, items) -> Bool in
+            action: { (m, i) -> Bool in
                 NSLog("Bar is clicked.")
                 return true
             },
