@@ -6,3 +6,6 @@
 *.xcworkspace/*
 !*.xcworkspace/contents.xcworkspacedata
 !*.xcworkspace/xcshareddata/*
+
+Carthage/Build
+

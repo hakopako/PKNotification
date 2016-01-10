@@ -292,6 +292,7 @@
 				D20AE8121C42010B00237004 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
