@@ -5,12 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>PKNotification by hakopako</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+
   </head>
   <body>
     <div class="wrapper">
@@ -21,8 +23,8 @@
           <li><a href="https://github.com/hakopako/PKNotification/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/hakopako/PKNotification">View On <strong>GitHub</strong></a></li>
         </ul>
-        <p>Simple and customizable notifications (Toast, Progress, Loading and Alert) in Swift.</p>
-
+        <img src="https://img.shields.io/badge/version-v1.0-green.svg"> <img src="https://img.shields.io/badge/license-MIT-lightgray.svg"> <img src="https://img.shields.io/badge/Target-iOS8%20or%20later-blue.svg">
+        <p>Simple and customizable notifications in Swift.</p>
 
         - <a href="#welcome">Welcome to PKNotification Pages</a><br>
 		- <a href="#howtouse">How to use</a><br>
@@ -37,16 +39,39 @@
         <h2>
 <a id="welcome" class="anchor" href="#welcome" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome to PKNotification Pages.</h2>
 
-Simple and customizable notification functions in Swift.<br>
-Target: iOS7 orater<br>
-Feel free to send me your feedback and PR. <br>
-<br>
+Simple and customizable notification functions in Swift.<br><br>
+
+<ul>
+    <li>Alert</li>
+    <li>ActionSheet</li>
+    <li>Toast</li>
+    <li>Loading</li>
+    <li>Success</li>
+    <li>Failed</li>
+</ul>
+
+Feel free to send me your feedback and PR. 
+<br><br>
 
 <h2><a id="howtouse" class="anchor" href="#howtouse" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
 
-1. Add <a href="https://github.com/hakopako/PKNotification/tree/master/PKNotification" target="blank">PKNotification/PKNotification.swift</a> into your project.<br>
-2. There is a global variable named PKNotification. <br>
-　Use the variable and call methodsike so<br>
+<h3>set up</h3>
+&lt;Manually&gt;<br>
+Add "PKNotification/PKNotification.swift" into your project.<br><br>
+
+&lt;Carthage&gt;<br>
+<pre><code>github "hakopako/PKNotification"</pre></code>
+
+&lt;CocoaPods&gt;<br>
+<pre><code>platform :ios, '8.0'
+use_frameworks!
+target "TargetProjet" do
+  pod 'PKNotification', '~> 1.0'
+end
+</pre></code>
+  
+There is a global variable named `PKNotification`.<br>
+Use the variable and call methods.<br><br>  
 <br>
 <hr>
 <h2>
@@ -66,7 +91,7 @@ PKNotification.alertMargin  //CGFloat
 PKNotification.alertTitleFontColor    //UIColor
 PKNotification.alertTitleFontStyle    //UIFont
 PKNotification.alertMessageFontColor  //UIColor
-PKNotification.alertMEssageFontStyle  //UIFont
+PKNotification.alertMessageFontStyle  //UIFont
 PKNotification.alertButtonFontColor   //UIColor
 PKNotification.alertBackgroundColor   //UIColor
 PKNotification.alertCornerRadius      //CGFloat
@@ -131,6 +156,34 @@ create alert
 <br><br>
 <hr>
 <h2>
+<a id="actionsheet" class="anchor" href="#actionsheet" aria-hidden="true"><span class="octicon octicon-link"></span></a>ActionSheet</h2>
+<img src="images/ActionSheet.png" width="45%"/><br/>
+create button
+<pre><code>let foo:PKButton = PKButton(title: "Foo",
+    action: { (m, i) -> Bool in
+        NSLog("Foo is clicked.")
+        return true
+    },
+    fontColor: UIColor(red: 0, green: 0.55, blue: 0.9, alpha: 1.0),
+    backgroundColor: nil)
+let bar:PKButton = PKButton(title: "Bar",
+    action: { (m, i) -> Bool in
+        NSLog("Bar is clicked.")
+        return true
+    },
+    fontColor: UIColor.purpleColor(),
+    backgroundColor: nil)
+</code></pre>
+create actionsheet
+<pre><code>PKNotification.actionSheet(
+    title: "Title",
+    items: [foo, bar],
+    cancelButtonTitle: "Cancel",
+    tintColor: nil)
+</code></pre>
+<br><br>
+<hr>
+<h2>
 <a id="toast" class="anchor" href="#toast" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toast</h2>
 <img src="images/Toast.png" width="45%"/>
 <pre><code>PKNotification.toast("hogehogehogehoge")
@@ -174,6 +227,5 @@ PKNotification.failedImage   //UIImage *if it's nil, set default image automatic
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
-    
   </body>
 </html>
