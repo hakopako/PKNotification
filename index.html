@@ -15,24 +15,23 @@
 
   </head>
   <body>
+
+<a href="https://github.com/hakopako/PKNotification"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
+
     <div class="wrapper">
       <header>
         <h1>PKNotification</h1>
-        <ul>
-          <li><a href="https://github.com/hakopako/PKNotification/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/hakopako/PKNotification/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/hakopako/PKNotification">View On <strong>GitHub</strong></a></li>
-        </ul>
         <img src="https://img.shields.io/badge/version-v1.0-green.svg"> <img src="https://img.shields.io/badge/license-MIT-lightgray.svg"> <img src="https://img.shields.io/badge/Target-iOS8%20or%20later-blue.svg">
-        <p>Simple and customizable notifications in Swift.</p>
-
-        - <a href="#welcome">Welcome to PKNotification Pages</a><br>
-		- <a href="#howtouse">How to use</a><br>
-        -- <a href="#simple-alert">Simple Alert</a><Br>
-        -- <a href="#optional-alert">Optional Alert</a><br>
-        -- <a href="#alert-with-textfield">Alert with TextField</a><br>
-        -- <a href="#toast">Toast</a><br>
-        -- <a href="#progress">Progress</a><br>
+        <br><br>
+        <ul>
+            <li><a href="#howtouse">Set up</a></li>
+            <li><a href="#simple-alert">Simple Alert</a></li>
+            <li><a href="#optional-alert">Optional Alert</a></li>
+            <li><a href="#alert-with-textfield">Alert with TextField</a></li>
+            <li><a href="#actionsheet">ActionSheet</a></li>
+            <li><a href="#toast">Toast</a></li>
+            <li><a href="#progress">Progress</a></li>
+        </ul>
 
       </header>
       <section>
@@ -76,7 +75,7 @@ Use the variable and call methods.<br><br>
 <hr>
 <h2>
 <a id="simple-alert" class="anchor" href="#simple-alert" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simple Alert</h2>
-<img src="images/SimpleAlert.png" width="45%"/>
+<img src="images/SimpleAlert.png"/>
 <pre><code>PKNotification.alert(
     title: "Success !!",
     message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
@@ -100,7 +99,7 @@ PKNotification.alertCornerRadius      //CGFloat
 <hr>
 <h2>
 <a id="optional-alert" class="anchor" href="#optional-alert" aria-hidden="true"><span class="octicon octicon-link"></span></a>Optional Alert</h2>
-<img src="images/OptionAlert2.png" width="45%"/><br>
+<img src="images/OptionAlert3.png"/><br>
 Create Button
 <pre><code>let foo:PKButton = PKButton(title: "Foo",
                             action: { (messageLabel, items) -> Bool in
@@ -114,7 +113,7 @@ Create Alert
 <pre><code>PKNotification.alert(
     title: "Notice",
     message: "Foooooooooooooo\nDisplay this default style pop up view.\nBaaaaaar",
-    items: [foo],
+    items: [foo, bar],
     cancelButtonTitle: "Cancel",
     tintColor: nil)
 </code></pre>
@@ -122,8 +121,8 @@ Create Alert
 <hr>
 <h2>
 <a id="alert-with-textfield" class="anchor" href="#alert-with-textfield" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alert with TextField</h2>
-<img src="images/AlertWithTextField.png" width="45%"/>
-<img src="images/AlertWithTextField2.png" width="45%"/><br/>
+<img src="images/AlertWithTextField.png"/>
+<img src="images/AlertWithTextField2.png"/><br/>
 init textfields as usual
 <pre><code>let email:UITextField = UITextField()
 email.placeholder = "email@host.com"
@@ -157,7 +156,7 @@ create alert
 <hr>
 <h2>
 <a id="actionsheet" class="anchor" href="#actionsheet" aria-hidden="true"><span class="octicon octicon-link"></span></a>ActionSheet</h2>
-<img src="images/ActionSheet.png" width="45%"/><br/>
+<img src="images/ActionSheet.png"/><br/>
 create button
 <pre><code>let foo:PKButton = PKButton(title: "Foo",
     action: { (m, i) -> Bool in
@@ -185,7 +184,7 @@ create actionsheet
 <hr>
 <h2>
 <a id="toast" class="anchor" href="#toast" aria-hidden="true"><span class="octicon octicon-link"></span></a>Toast</h2>
-<img src="images/Toast.png" width="45%"/>
+<img src="images/Toast.png"/>
 <pre><code>PKNotification.toast("hogehogehogehoge")
 </code></pre>
 
@@ -202,9 +201,9 @@ PKNotification.toastFontStyle  //UIFont
 <hr>
 <h2>
 <a id="progress" class="anchor" href="#progress" aria-hidden="true"><span class="octicon octicon-link"></span></a>Progress</h2>
-<img src="images/Loading.png" width="30%"/>
-<img src="images/Success.png" width="30%"/>
-<img src="images/Failed.png" width="30%"/><br>
+<img src="images/Loading.png"/>
+<img src="images/Success.png"/>
+<img src="images/Failed.png"/><br>
 <pre><code>PKNotification.loading(true)  // show loading view.
 PKNotification.loading(false) // hide loading view.
 PKNotification.success(nil)   // show default success image.
@@ -223,7 +222,6 @@ PKNotification.failedImage   //UIImage *if it's nil, set default image automatic
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/hakopako">hakopako</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
     <script src="javascripts/scale.fix.js"></script>
